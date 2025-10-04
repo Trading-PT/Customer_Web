@@ -17,6 +17,7 @@ import { useState } from "react";
 import CustomModal from "../components/CustomModal"; // variant={1}
 import { useAuthStore } from "../stores/authStore";
 import { useAuth } from "../hooks/useAuth";
+import ResetPasswordAuthModal from "./ResetPasswordAuthModal";
 
 type Props = {
 	name: string;
@@ -30,6 +31,7 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 
 	// Modal 상태 관리
 	const [openModal, setOpenModal] = useState<null | "password" | "uid" | "type" | "withdraw">(null);
+	const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
 
 	// authStore
 	const { logout } = useAuthStore();
@@ -93,7 +95,7 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 
 				{/* 메뉴 */}
 				<nav className="flex flex-col gap-2 md:gap-3 w-full md:w-52 text-xs md:text-sm">
-					<button onClick={() => setOpenModal("password")} className="flex items-center gap-2 cursor-pointer">
+					<button onClick={() => setResetPasswordModalOpen(true)} className="flex items-center gap-2 cursor-pointer">
 						<Lock size={16} /> 비밀번호 변경
 					</button>
 					<button onClick={() => router.push("/mypayment")} className="flex items-center gap-2 cursor-pointer">
@@ -139,6 +141,13 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 				<h2 className="text-lg mb-4">비밀번호 변경</h2>
 				<p>비밀번호 변경 기능 구현</p>
 			</CustomModal>
+
+			{resetPasswordModalOpen && (
+				<ResetPasswordAuthModal
+					isOpen={resetPasswordModalOpen}
+					onClose={() => setResetPasswordModalOpen(false)}
+				/>
+			)}
 
 			<CustomModal variant={1} isOpen={openModal === "uid"} onClose={() => setOpenModal(null)} width="max-w-xl">
 				<h2 className="text-lg mb-4">UID 관리</h2>

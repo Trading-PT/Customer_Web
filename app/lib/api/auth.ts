@@ -243,6 +243,7 @@ class AuthAPI {
     });
   }
 
+  // 비로그인 상황에서 비밀번호 재설정 
   async resetPasswordUnauthenticated(
     email: string,
     code: string,
@@ -250,12 +251,26 @@ class AuthAPI {
     newPasswordCheck: string
   ): Promise<ApiResponse> {
     return this.request('/api/v1/auth/password/update', {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify({
         email,
         code,
         newPassword,
         newPasswordCheck,
+      }),
+    });
+  }
+
+  // 로그인 상황에 비밀번호 재설정 
+  async resetPasswordAuthenticated(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<ApiResponse> {
+    return this.request('/api/v1/user/password/change', {
+      method: 'POST',
+      body: JSON.stringify({
+        currentPassword,
+        newPassword
       }),
     });
   }

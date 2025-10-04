@@ -35,6 +35,11 @@ export interface AuthContextType {
     newPasswordCheck: string
   ) => Promise<ApiResponse>;
 
+  resetPasswordAuthenticated: (
+    currentPassword: string,
+    newPassword: string,
+  ) => Promise<ApiResponse>;
+
   myInfo: () => Promise<any>;
 
   requestSwingFeedback: (data: any) => Promise<ApiResponse>;
@@ -160,6 +165,26 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
+  const resetPasswordAuthenticated = async (
+    currentPassword: string,
+    newPassword: string,
+  ) => {
+    setIsLoading(true);
+    try {
+      const result = await authAPI.resetPasswordAuthenticated(
+        currentPassword,
+        newPassword,
+      );
+
+      return result;
+    } catch (error) {
+      console.error("비밀번호 재설정 중 오류:", error);
+      return { success: false, error: "비밀번호 재설정 중 오류가 발생했습니다." };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const deleteUser = async () => {
     setIsLoading(true);
     try {
@@ -234,6 +259,7 @@ export const useAuth = (): AuthContextType => {
     signup,
     logout,
     resetPasswordUnauthenticated,
+    resetPasswordAuthenticated,
     deleteUser,
     myInfo,
     requestSwingFeedback,
