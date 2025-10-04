@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AuthHeader from "./components/AuthHeader";
 import Footer from "./components/Footer";
+import { useAuthCheck } from "./stores/useAuthCheck";
+import AuthInitializer from "./components/AuthInitializer";
 
 export const metadata: Metadata = {
   title: "TPT",
@@ -16,6 +18,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <head>
@@ -23,6 +26,7 @@ export default function RootLayout({
         <meta name="supported-color-schemes" content="light" />
       </head>
       <body>
+        <AuthInitializer />
         <AuthHeader />
         {children}
         <Footer />

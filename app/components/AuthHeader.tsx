@@ -5,11 +5,13 @@ import { useAuthStore } from "../stores/authStore";
 import SideBar from "../mainpage_components/SideBar";
 import CustomButton from "./CustomButton";
 import { Menu } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 export default function AuthHeader() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated, logout: logoutStore } = useAuthStore();
+  const { logout: logoutAPI } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // 로그인/회원가입 페이지에서는 헤더 숨김
@@ -22,8 +24,9 @@ export default function AuthHeader() {
     return null;
   }
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logoutAPI(); // 서버 로그아웃 호출
+    logoutStore(); // Zustand 상태 초기화
     router.push("/login");
   };
 

@@ -35,6 +35,7 @@ interface ApiResponse<T = unknown> {
   data?: T;
   message?: string;
   error?: string;
+  status?: number;
 }
 
 // 아이디 찾기 응답에 맞는 result 타입
@@ -154,6 +155,13 @@ class AuthAPI {
     return this.request('/api/v1/auth/login', {
       method: 'POST',
       body: JSON.stringify(loginData),
+    });
+  }
+
+  // 로그아웃
+  async logout(): Promise<ApiResponse> {
+    return this.request('/api/v1/auth/logout', {
+      method: 'POST',
     });
   }
 

@@ -113,10 +113,19 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('auth_user');
-    localStorage.removeItem('auth_token');
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      const result = await authAPI.logout();
+      setUser(null);
+      localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_token');
+      return result;
+    } catch (error) {
+      return { success: false, error: '로그아웃 중 오류가 발생했습니다.' };
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const myInfo = async () => {
