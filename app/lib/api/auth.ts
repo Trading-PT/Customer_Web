@@ -243,6 +243,23 @@ class AuthAPI {
     });
   }
 
+  async resetPasswordUnauthenticated(
+    email: string,
+    code: string,
+    newPassword: string,
+    newPasswordCheck: string
+  ): Promise<ApiResponse> {
+    return this.request('/api/v1/auth/password/update', {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        code,
+        newPassword,
+        newPasswordCheck,
+      }),
+    });
+  }
+
   // 스윙 피드백 요청
   async requestSwingFeedback(data: SwingFeedbackRequest): Promise<ApiResponse> {
     const formData = new FormData();

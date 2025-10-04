@@ -370,7 +370,7 @@ export default function Signup({ searchParams }: any) {
 					</div>
 
 					{/* UID 입력 영역 */}
-					{/* <div className="w-full flex flex-col items-end gap-2">
+					<div className="w-full flex flex-col items-end gap-2">
 						<div className='w-full flex justify-start items-center gap-2'>
 							<p>UID 입력</p>
 							<CustomButton
@@ -413,7 +413,7 @@ export default function Signup({ searchParams }: any) {
 						>
 							+ UID 추가 입력 (최대 5개)
 						</CustomButton>
-					</div> */}
+					</div>
 
 					<div className="w-full my-2">
 						<InvestmentTypeSelector

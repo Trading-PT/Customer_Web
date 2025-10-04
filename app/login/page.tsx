@@ -12,6 +12,7 @@ import CustomButton from "../components/CustomButton";
 import CustomCheckBox from "../components/CustomCheckBox";
 import CustomModal from "../components/CustomModal";
 import { CustomLink } from "../components/CustomLink";
+import ResetPasswordModal from "./ResetPasswordModal";
 
 export default function Login() {
 	const apiBaseUrl = process.env.NEXT_PUBLIC_SERVER_URI;
@@ -26,6 +27,7 @@ export default function Login() {
 	const [error, setError] = useState("");
 	const [showErrorModal, setShowErrorModal] = useState(false);
 	const [checked, setChecked] = useState(false);
+	const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
 
 	const handleLogin = async () => {
 		if (!userId || !password) {
@@ -158,7 +160,7 @@ export default function Login() {
 							</button>
 							<button
 								type="button"
-								onClick={() => setFindIdModalOpen(true)}
+								onClick={() => setResetPasswordModalOpen(true)}
 								className="text-blue-600 cursor-pointer underline"
 							>
 								비밀번호 찾기
@@ -218,6 +220,13 @@ export default function Login() {
 								</p>
 							</div>
 						</CustomModal>
+					)}
+
+					{resetPasswordModalOpen && (
+						<ResetPasswordModal
+							isOpen={resetPasswordModalOpen}
+							onClose={() => setResetPasswordModalOpen(false)}
+						/>
 					)}
 
 					{/* 아이디 찾기 모달 */}
