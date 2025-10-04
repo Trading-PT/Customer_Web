@@ -26,6 +26,7 @@ export interface AuthContextType {
   ) => Promise<{ success: boolean; error?: string }>;
 
   logout: () => void;
+  deleteUser: () => void;
 
   myInfo: () => Promise<any>;
 
@@ -128,6 +129,21 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
+  const deleteUser = async () => {
+    setIsLoading(true);
+    try {
+      const result = await authAPI.deleteUser();
+      setUser(null);
+      localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_token');
+      return result;
+    } catch (error) {
+      return { success: false, error: '회원탈퇴 중 오류가 발생했습니다.' };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const myInfo = async () => {
     setIsLoading(true);
     try {
@@ -186,6 +202,7 @@ export const useAuth = (): AuthContextType => {
     login,
     signup,
     logout,
+    deleteUser,
     myInfo,
     requestSwingFeedback,
     requestDayFeedback,

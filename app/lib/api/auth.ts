@@ -165,6 +165,13 @@ class AuthAPI {
     });
   }
 
+  // 회원탈퇴 
+  async deleteUser(): Promise<ApiResponse> {
+    return this.request('/api/v1/auth/users', {
+      method: 'DELETE',
+    });
+  }
+
   // 전화번호 인증 코드 발송
   async sendPhoneCode(phone: string): Promise<ApiResponse> {
     return this.request('/api/v1/auth/phone/code', {

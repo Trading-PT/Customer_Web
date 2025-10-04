@@ -16,6 +16,7 @@ import ProfileImageUploader from "./profileImageUploader";
 import { useState } from "react";
 import CustomModal from "../components/CustomModal"; // variant={1}
 import { useAuthStore } from "../stores/authStore";
+import { useAuth } from "../hooks/useAuth";
 
 type Props = {
 	name: string;
@@ -32,11 +33,23 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 
 	// authStore
 	const { logout } = useAuthStore();
+	const { deleteUser } = useAuth();
 
 	const handleLogout = () => {
 		logout();
 		router.push("/login");
 	};
+
+	const handleDeleteUser = async () => {
+		const confirmed = window.confirm(
+			"정말로 탈퇴하시겠습니까?\n탈퇴하시면 보유 데이터가 전부 삭제됩니다."
+		);
+
+		if (!confirmed) return;
+
+		await deleteUser();
+	};
+
 
 	const handleProfileImageChange = (file: File) => {
 		const imageUrl = URL.createObjectURL(file);
@@ -114,7 +127,7 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 					<Headphones size={16} /> 고객센터
 				</button>
 				<button
-					onClick={() => setOpenModal("withdraw")}
+					onClick={handleDeleteUser}
 					className="flex items-center gap-2 text-xs md:text-sm text-red-400 cursor-pointer"
 				>
 					<Trash2 size={16} /> 회원 탈퇴
