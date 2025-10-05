@@ -2,8 +2,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authAPI } from "../lib/api/auth";
 
-// zustand/middleware/persist 활용하여, zustand 상태를 localStorage와 동기화 했음 
-
 interface User {
 	name?: string;
 	username?: string;
@@ -15,7 +13,7 @@ interface AuthState {
 	user: User | null;
 	login: (user: User) => void;
 	logout: () => void;
-	checkAuth: () => Promise<void>;
+	checkAuth: (myInfoFn?: () => Promise<any>) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -36,11 +34,12 @@ export const useAuthStore = create<AuthState>()(
 					user: null,
 				}),
 
-			// 최초 접속 시 쿠키 기반 인증 확인
-			checkAuth: async () => {
+			// 최초 접속 시 myInfo를 호출
+			checkAuth: async (myInfoFn?: () => Promise<any>) => {
 				try {
-					const res = await authAPI.getUserProfile();
-					if (res.status === 200 && res.data) {
+					const res = myInfoFn ? await myInfoFn() : await authAPI.getUserProfile();
+
+					if (res?.success && res?.data) {
 						set({
 							isAuthenticated: true,
 							user: res.data,
@@ -48,7 +47,8 @@ export const useAuthStore = create<AuthState>()(
 					} else {
 						set({ isAuthenticated: false, user: null });
 					}
-				} catch {
+				} catch (err) {
+					console.error("checkAuth 오류:", err);
 					set({ isAuthenticated: false, user: null });
 				}
 			},

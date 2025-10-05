@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ApiResponse, authAPI } from '../lib/api/auth';
 
 export interface User {
@@ -200,7 +200,21 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  const myInfo = async () => {
+  // const myInfo = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await authAPI.getUserProfile();
+  //     console.log("내 정보 조회 성공:", res);
+  //     return res;
+  //   } catch (error) {
+  //     console.error("내 정보 조회 실패:", error);
+  //     return null;
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const myInfo = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await authAPI.getUserProfile();
@@ -212,7 +226,7 @@ export const useAuth = (): AuthContextType => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const requestSwingFeedback = async (data: any) => {
     setIsLoading(true);
