@@ -114,7 +114,23 @@ class AuthAPI {
       }
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errorMessage = `HTTP ${response.status}`;
+        try {
+          const errorBody = await response.text();
+          const parsed = errorBody ? JSON.parse(errorBody) : {};
+          console.error("❌ [API ERROR RESPONSE BODY]:", parsed);
+
+          // 서버에서 내려주는 형식 지원
+          if (parsed.message) errorMessage = parsed.message;
+          else if (parsed.errorMessage) errorMessage = parsed.errorMessage;
+          else if (parsed.exception?.errorMessage)
+            errorMessage = parsed.exception.errorMessage;
+          else errorMessage = JSON.stringify(parsed);
+        } catch (parseError) {
+          console.warn("⚠️ 오류 본문 파싱 실패:", parseError);
+        }
+
+        throw new Error(errorMessage);
       }
 
       // // 응답 Body가 있는지 확인

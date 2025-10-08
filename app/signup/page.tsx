@@ -325,6 +325,7 @@ export default function Signup({ searchParams }: any) {
 							value={name}
 							onChange={setName}
 							variant={2}
+							autoComplete="off"
 						/>
 						<CustomInputField
 							placeholder="전화번호"
@@ -334,6 +335,7 @@ export default function Signup({ searchParams }: any) {
 							buttonLabel={phoneVerified ? "인증완료" : "인증하기"}
 							onButtonClick={handlePhoneVerifyStart}
 							disabled={phoneVerified || loading}
+							autoComplete="off"
 						/>
 						<CustomInputField
 							placeholder="아이디"
@@ -343,6 +345,7 @@ export default function Signup({ searchParams }: any) {
 							buttonLabel={idChecked ? "확인완료" : "중복검사"}
 							onButtonClick={handleIdCheck}
 							disabled={idChecked || loading}
+							autoComplete="off"
 						/>
 						<CustomInputField
 							placeholder="비밀번호 입력"
@@ -350,6 +353,7 @@ export default function Signup({ searchParams }: any) {
 							onChange={setPw}
 							variant={2}
 							type="password"
+							autoComplete="new-password" // 테스트 !!
 						/>
 						<CustomInputField
 							placeholder="비밀번호 재입력"
@@ -357,6 +361,7 @@ export default function Signup({ searchParams }: any) {
 							onChange={setPw2}
 							variant={2}
 							type="password"
+							autoComplete="off"
 						/>
 						<CustomInputField
 							placeholder="이메일"
@@ -366,6 +371,7 @@ export default function Signup({ searchParams }: any) {
 							buttonLabel={emailVerified ? "인증완료" : "인증하기"}
 							onButtonClick={handleEmailVerifyStart}
 							disabled={emailVerified || loading}
+							autoComplete="off"
 						/>
 					</div>
 
@@ -392,16 +398,18 @@ export default function Signup({ searchParams }: any) {
 									value={item.uid}
 									onChange={(value) => handleUidExchangeChange(index, 'uid', value)}
 									variant={2}
+									autoComplete="off"
 								/>
 								<CustomInputField
 									placeholder="거래소명"
 									value={item.exchange}
 									onChange={(value) => handleUidExchangeChange(index, 'exchange', value)}
 									variant={2}
+									autoComplete="off"
 								/>
 							</div>
 						))}
-						<CustomButton
+						{/* <CustomButton
 							variant='normalClean'
 							width='w-auto'
 							onClick={handleAddUidExchange}
@@ -412,7 +420,7 @@ export default function Signup({ searchParams }: any) {
 
 						>
 							+ UID 추가 입력 (최대 5개)
-						</CustomButton>
+						</CustomButton> */}
 					</div>
 
 					<div className="w-full my-2">
@@ -524,7 +532,8 @@ export default function Signup({ searchParams }: any) {
 						<CustomModal
 							isOpen={showSuccessModal}
 							onClose={handleSuccessModalClose}
-							variant={2}
+							variant={1}
+							width="w-auto"
 						>
 							<div className="p-6 text-center">
 								<h3 className="text-xl font-semibold mb-2">회원가입 완료!</h3>

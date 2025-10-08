@@ -12,10 +12,11 @@ import { mapSwingFormData, mapDayFormData, mapScalpingFormData } from "../utils/
 export default function RequestFeedback() {
 	// 현재 로그인된 사용자
 	// 0 - 무료, 1 - 스윙, 2 - 데이, 3 - 스켈핑 
-	const currentUser = mockUsers[2];
+	const currentUser = mockUsers[1];
 	const { requestSwingFeedback, requestDayFeedback, requestScalpingFeedback } = useAuth();
 
-	const { investmentType, completion } = currentUser;
+	// 사용자 지위, 투자 유형, 완강 여부 
+	const { userLevel, investmentType, completion } = currentUser;
 
 	console.log("User::");
 	console.log(investmentType);
@@ -41,39 +42,7 @@ export default function RequestFeedback() {
 				fd.forEach((value, key) => console.log(key, value));
 				console.log("-------------정제된 데이터 끝------------------");
 				res = await requestDayFeedback(fd);
-
-				// const fd = new FormData();
-				// fd.append("membershipLevel", "PREMIUM");
-				// fd.append("requestDate", "2025-09-28");
-				// fd.append("category", "string");
-				// fd.append("positionHoldingTime", "string");
-
-				// const fakeFile = new File(["dummy content"], "test.png", { type: "image/png" });
-				// fd.append("screenshotFiles", fakeFile);
-
-
-				// fd.append("riskTaking", "0");
-				// fd.append("leverage", "0");
-				// fd.append("position", "LONG");
-				// fd.append("trainerFeedbackRequestContent", "string");
-				// fd.append("directionFrame", "string");
-				// fd.append("mainFrame", "string");
-				// fd.append("subFrame", "string");
-				// fd.append("directionFrameExists", "true");
-				// fd.append("trendAnalysis", "string");
-				// fd.append("pnl", "-5");
-				// fd.append("winLossRatio", "string");
-				// fd.append("entryPoint1", "REVERSE");
-				// fd.append("grade", "S_PLUS");
-				// fd.append("entryPoint2", "2025-09-28");
-				// fd.append("tradingReview", "string");
-
-				// console.log("-----------하드코딩 FormData(entries):-----------");
-				// fd.forEach((value, key) => console.log(key, value));
-				// console.log("-------------정제된 데이터 끝------------------");
-
-				// const res = await requestDayFeedback(fd);
-				console.log("res는:", res);
+				console.log("저장 결과:", res);
 
 			} else if (investmentType === "SCALPING") {
 				fd = mapScalpingFormData(formData);
@@ -103,7 +72,7 @@ export default function RequestFeedback() {
 
 	return (
 		<div className="flex h-screen bg-white flex-col items-center gap-6 p-6 mt-20">
-			{(completion == "BEFORE_COMPLETION" || completion == "AFTER_COMPLETION") && (
+			{(completion == "AFTER_COMPLETION") && (
 				<FeedbackHeader />
 			)}
 

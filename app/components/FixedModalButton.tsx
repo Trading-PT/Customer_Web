@@ -29,6 +29,7 @@ export const FixedModalButton: React.FC<FixedModalButtonProps> = ({
         <div className="relative inline-block">
             {/* 드롭다운 버튼 */}
             <button
+                type="button" // 폼 제출 방지
                 onClick={handleToggleDropdown}
                 className="flex items-center justify-between px-2 py-1 border rounded-md bg-white text-gray-700
                 text-sm shadow-sm w-full focus:outline-none cursor-pointer"

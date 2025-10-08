@@ -15,6 +15,23 @@ export default function EntryTable({ isOpen, onClose, onSelect }: EntryTableProp
 		{ name: "Break out", color: "text-green-600", grades: ["A", "B", "*"] },
 	];
 
+	// 선택된 값을 서버 전송용 포맷으로 변환하는 함수
+	const normalizeValue = (target: string, grade: string) => {
+		let normalizedTarget = target
+			.toUpperCase()
+			.replace(/\s+/g, "_") // 공백 → _
+			.replace("BREAKOUT", "BREAK_OUT") // "Break out" 보정
+			.replace("PULLBACK", "PULL_BACK"); // "Pull back" 보정
+
+		let normalizedGrade = grade
+			.toUpperCase()
+			.replace("+", "_PLUS") // S+ → S_PLUS
+			.replace("*", "NONE") // * → NONE
+			.replace("C", "NONE"); // C → NONE
+
+		return { target: normalizedTarget, grade: normalizedGrade };
+	};
+
 	return (
 		<CustomModal isOpen={isOpen} onClose={onClose} variant={1}>
 			<div className="p-4">
@@ -34,26 +51,22 @@ export default function EntryTable({ isOpen, onClose, onSelect }: EntryTableProp
 						{rows.map((row, rowIndex) => (
 							<tr key={rowIndex}>
 								{/* 타점 */}
-								<td
-									className={`border border-gray-300 px-4 py-2 font-semibold ${row.color}`}
-								>
+								<td className={`border border-gray-300 px-4 py-2 font-semibold ${row.color}`}>
 									{row.name}
 								</td>
 								{/* 버튼들 */}
 								{Array.from({ length: 5 }).map((_, colIndex) => {
 									const grade = row.grades[colIndex];
 									return (
-										<td
-											key={colIndex}
-											className="border border-gray-300 px-4 py-2"
-										>
+										<td key={colIndex} className="border border-gray-300 px-4 py-2">
 											{grade ? (
 												<button
 													onClick={() => {
-														onSelect({ target: row.name, grade });
+														const normalized = normalizeValue(row.name, grade);
+														onSelect(normalized);
 														onClose();
 													}}
-													className="px-3 py-1 rounded bg-gray-100 transition cursor-pointer"
+													className="px-3 py-1 rounded bg-gray-100 transition cursor-pointer hover:bg-gray-200"
 												>
 													{grade}
 												</button>

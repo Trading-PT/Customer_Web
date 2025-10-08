@@ -7,11 +7,26 @@ import WeekSelector from "../WeekSelector";
 type Props = {
 	onSubmit: (data: any) => void;
 	currentUser: User;
-	riskTaking?: number; // 기본값 5%
+	riskTaking?: number;
+};
+
+const investmentTypeMap: Record<string, string> = {
+	SWING: "스윙",
+	DAY: "데이",
+	SCALPING: "스켈핑",
+};
+
+const completionMap: Record<string, string> = {
+	BEFORE_COMPLETION: "완강 전",
+	AFTER_COMPLETION: "완강 후",
+	FREE: "무료",
 };
 
 export default function BasicOrBeforeForm({ onSubmit, currentUser, riskTaking = 5 }: Props) {
 	const { investmentType, completion } = currentUser;
+
+	const investmentTypeLabel = investmentTypeMap[investmentType] || investmentType;
+	const completionLabel = completionMap[completion] || completion;
 
 	const handleWeekChange = (data: { month: number; week: number }) => {
 		console.log("현재 선택된 값:", data);
@@ -76,9 +91,9 @@ export default function BasicOrBeforeForm({ onSubmit, currentUser, riskTaking = 
     ${investmentType === "DAY" ? "bg-green-400" : ""}
     ${investmentType === "SCALPING" ? "bg-sky-400" : ""}`}
 				>
-					{investmentType}
+					{investmentTypeLabel}
 				</span>
-				<span className="px-3 py-1 border rounded">{completion}</span>
+				<span className="px-3 py-1 border rounded">{completionLabel}</span>
 
 				{investmentType === "SWING" && (
 					<WeekSelector onChange={handleWeekChange} />
