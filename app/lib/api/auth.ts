@@ -54,19 +54,6 @@ class AuthAPI {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
-      // 쿠키에서 XSRF-TOKEN 꺼내기
-      // const getCookie = (name: string) => {
-      //   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      //   return match ? decodeURIComponent(match[2]) : null;
-      // };
-      // const xsrfToken = getCookie("XSRF-TOKEN");
-      // console.log("📌 쿠키에서 가져온 XSRF-TOKEN:", xsrfToken);
-
-      // const finalHeaders = {
-      //   'Content-Type': 'application/json',
-      //   ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
-      //   ...options.headers,
-      // };
 
       const isFormData = options.body instanceof FormData;
 
@@ -100,7 +87,6 @@ class AuthAPI {
       console.log("⬅️ RESPONSE HEADERS:", [...response.headers.entries()]);
 
       // 🔹 4. 응답 헤더에서 새 XSRF-TOKEN 있으면 저장
-      // const newToken = response.headers.get("XSRF-TOKEN");
       const newToken =
         response.headers.get("x-xsrf-token") ||
         response.headers.get("xsrf-token");
@@ -114,31 +100,12 @@ class AuthAPI {
       }
 
       if (!response.ok) {
-        let errorMessage = `HTTP ${response.status}`;
         try {
-          const errorBody = await response.text();
-          const parsed = errorBody ? JSON.parse(errorBody) : {};
-          console.error("❌ [API ERROR RESPONSE BODY]:", parsed);
-
-          // 서버에서 내려주는 형식 지원
-          if (parsed.message) errorMessage = parsed.message;
-          else if (parsed.errorMessage) errorMessage = parsed.errorMessage;
-          else if (parsed.exception?.errorMessage)
-            errorMessage = parsed.exception.errorMessage;
-          else errorMessage = JSON.stringify(parsed);
         } catch (parseError) {
           console.warn("⚠️ 오류 본문 파싱 실패:", parseError);
         }
-
-        throw new Error(errorMessage);
       }
 
-      // // 응답 Body가 있는지 확인
-      // const text = await response.text();
-      // const data = text ? JSON.parse(text) : {};
-      // // console.log("⬅️ RESPONSE BODY:", data);
-
-      // return { success: true, data };
       const text = await response.text();
       const raw: ServerResponse<T> = text ? JSON.parse(text) : null;
 
@@ -148,15 +115,13 @@ class AuthAPI {
         message: raw?.message,
       };
     } catch (error) {
-      console.error('❌ API Error:', error);
+      console.log('❌ API Error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }
-
-
 
   // 회원가입
   async signup(signupData: SignupRequest): Promise<ApiResponse> {

@@ -228,6 +228,8 @@ export const useAuth = (): AuthContextType => {
     }
   }, []);
 
+  // 무료 고객은 데이터 가공 메소드만 다르게 하고, 동일한 API 에게로 요청을 보내므로 requestFreeFeedback 은 없음 !!
+
   const requestSwingFeedback = async (data: any) => {
     setIsLoading(true);
     try {

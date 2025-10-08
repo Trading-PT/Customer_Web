@@ -7,12 +7,12 @@ import DayAfterForm from "./forms/DayAfterForm";
 import ScalpingAfterForm from "./forms/ScalpingAfterForm";
 import { mockUsers } from "../mocks/user";
 import { useAuth } from "../hooks/useAuth";
-import { mapSwingFormData, mapDayFormData, mapScalpingFormData } from "../utils/feedbackFormMapper";
+import { mapSwingFormData, mapDayFormData, mapScalpingFormData, mapFreeFormData } from "../utils/feedbackFormMapper";
 
 export default function RequestFeedback() {
 	// 현재 로그인된 사용자
 	// 0 - 무료, 1 - 스윙, 2 - 데이, 3 - 스켈핑 
-	const currentUser = mockUsers[1];
+	const currentUser = mockUsers[0];
 	const { requestSwingFeedback, requestDayFeedback, requestScalpingFeedback } = useAuth();
 
 	// 사용자 지위, 투자 유형, 완강 여부 
@@ -32,23 +32,66 @@ export default function RequestFeedback() {
 			let res;
 
 			if (investmentType === "SWING") {
-				fd = mapSwingFormData(formData);
-				console.log("-----------정제된 데이터는 (entries):-----------");
-				fd.forEach((value, key) => console.log(key, value));
-				res = await requestSwingFeedback(fd);
+				console.log("******** userLevel은:", userLevel);
+				// SWING 이면서 무료인 경우 데이터 가공 따로 하기 
+				if (userLevel === "BASIC") {
+					console.log("*** SWING + BASIC ***");
+					fd = mapFreeFormData(formData); // 여기서 필드만 가공
+					console.log("-----------BASIC: 정제된 데이터는 (entries):-----------");
+					fd.forEach((value, key) => console.log(key, value));
+					res = await requestSwingFeedback(fd); // 동일한 API에게 요청함 
+					console.log("저장 결과:", res);
+				}
+
+				else if (userLevel === "PREMIUM") {
+					console.log("*** SWING + PREMIUM ***");
+					fd = mapSwingFormData(formData);
+					console.log("-----------정제된 데이터는 (entries):-----------");
+					fd.forEach((value, key) => console.log(key, value));
+					res = await requestSwingFeedback(fd);
+					console.log("저장 결과:", res);
+				}
+
 			} else if (investmentType === "DAY") {
-				fd = mapDayFormData(formData);
-				console.log("-----------정제된 데이터는 (entries):-----------");
-				fd.forEach((value, key) => console.log(key, value));
-				console.log("-------------정제된 데이터 끝------------------");
-				res = await requestDayFeedback(fd);
-				console.log("저장 결과:", res);
+				// DAY 이면서 무료인 경우 데이터 가공 따로 하기
+				if (userLevel === "BASIC") {
+					console.log("DAY + BASIC");
+					fd = mapFreeFormData(formData);
+					console.log("-----------BASIC: 정제된 데이터는 (entries):-----------");
+					fd.forEach((value, key) => console.log(key, value));
+					res = await requestDayFeedback(fd);
+					console.log("저장 결과:", res);
+				}
+
+				else if (userLevel === "PREMIUM") {
+					console.log("DAY + PREMIUM");
+					fd = mapDayFormData(formData);
+					console.log("-----------정제된 데이터는 (entries):-----------");
+					fd.forEach((value, key) => console.log(key, value));
+					console.log("-------------정제된 데이터 끝------------------");
+					res = await requestDayFeedback(fd);
+					console.log("저장 결과:", res);
+				}
 
 			} else if (investmentType === "SCALPING") {
-				fd = mapScalpingFormData(formData);
-				console.log("정제된 데이터는 (entries):");
-				fd.forEach((value, key) => console.log(key, value));
-				res = await requestScalpingFeedback(fd);
+				// TODO: SCALPING 이면서 무료인 경우 데이터 가공 따로 하기
+				if (userLevel === "BASIC") {
+					console.log("SCALPING + BASIC");
+					fd = mapFreeFormData(formData);
+					console.log("-----------BASIC: 정제된 데이터는 (entries):-----------");
+					fd.forEach((value, key) => console.log(key, value));
+					res = await requestScalpingFeedback(fd);
+					console.log("저장 결과:", res);
+				}
+
+				else if (userLevel === "PREMIUM") {
+					console.log("SCALPING + PREMIUM");
+					fd = mapScalpingFormData(formData);
+					console.log("정제된 데이터는 (entries):");
+					fd.forEach((value, key) => console.log(key, value));
+					res = await requestScalpingFeedback(fd);
+					console.log("저장 결과:", res);
+				}
 			}
 
 			console.log("서버 응답:", res);
