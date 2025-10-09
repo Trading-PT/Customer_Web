@@ -45,6 +45,9 @@ export interface AuthContextType {
   requestSwingFeedback: (data: any) => Promise<ApiResponse>;
   requestDayFeedback: (data: any) => Promise<ApiResponse>;
   requestScalpingFeedback: (data: any) => Promise<ApiResponse>;
+
+  writeComplaint: (title: string, content: string) => Promise<ApiResponse>;
+  readComplaint: () => Promise<ApiResponse>;
 }
 
 
@@ -266,6 +269,30 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
+  const writeComplaint = async (title: string, content: string) => {
+    setIsLoading(true);
+    try {
+      return await authAPI.writeComplaint(title, content);
+    } catch (error) {
+      console.error("민원 작성 요청 실패:", error);
+      return { success: false, error: "민원 작성 요청 중 오류 발생" };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const readComplaint = async () => {
+    setIsLoading(true);
+    try {
+      return await authAPI.readComplaint();
+    } catch (error) {
+      console.error("민원 조회 요청 실패:", error);
+      return { success: false, error: "민원 조회 요청 중 오류 발생" };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
 
   return {
     user,
@@ -280,6 +307,8 @@ export const useAuth = (): AuthContextType => {
     myInfo,
     requestSwingFeedback,
     requestDayFeedback,
-    requestScalpingFeedback
+    requestScalpingFeedback,
+    writeComplaint,
+    readComplaint
   };
 };

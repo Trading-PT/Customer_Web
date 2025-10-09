@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Send, Edit3, Trash2, ImagePlus } from "lucide-react";
 import CustomButton from "../components/CustomButton";
+import { useAuth } from "../hooks/useAuth";
+import CustomModal from "../components/CustomModal";
 
 type Complaint = {
 	id: number;
@@ -20,57 +22,79 @@ export default function CustomerCenter() {
 	const [image, setImage] = useState<string | undefined>(undefined);
 	const [complaints, setComplaints] = useState<Complaint[]>([]);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
+	// ✅ API hook 연결
+	const { writeComplaint, readComplaint } = useAuth();
+
+	// ✅ 이미지 업로드
 	const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
 		const reader = new FileReader();
-		reader.onloadend = () => {
-			setImage(reader.result as string);
-		};
+		reader.onloadend = () => setImage(reader.result as string);
 		reader.readAsDataURL(file);
 	};
 
-	const handleSubmit = () => {
-		if (!title || !content) return;
+	// ✅ 민원 작성
+	const handleSubmit = async () => {
+		if (!title || !content) return alert("제목과 내용을 모두 입력해주세요.");
 
-		const newComplaint: Complaint = {
-			id: complaints.length + 1,
-			title,
-			content,
-			createdAt: new Date().toLocaleString(),
-			status: "pending",
-			image,
-		};
+		try {
+			setIsLoading(true);
+			const res = await writeComplaint(title, content);
 
-		setComplaints((prev) => [...prev, newComplaint]);
-		setTitle("");
-		setContent("");
-		setImage(undefined);
-		setIsModalOpen(true);
-		setTab("list");
+			// ✅ 서버 응답이 실패했거나 success가 false인 경우
+			if (!res || !res.success) {
+				console.error("민원 작성 실패:", res?.error || res?.message);
+				alert("민원 접수에 실패했습니다. 다시 시도해주세요.");
+				return; // 🚫 아래 코드 실행 방지
+			}
 
-		// mock 답변 자동 등록
-		setTimeout(() => {
-			setComplaints((prev) =>
-				prev.map((c) =>
-					c.id === newComplaint.id
-						? {
-							...c,
-							status: "answered",
-							answer: `안녕하세요 고객님, 소중한 의견 주셔서 감사합니다.
-트레이너의 부적절한 언행으로 불편을 드려 죄송합니다.
-빠른 시일 내 개선 조치를 진행하겠습니다.`,
-						}
-						: c
-				)
-			);
-		}, 3000);
+			// ✅ 성공 시
+			setTitle("");
+			setContent("");
+			setImage(undefined);
+			setIsModalOpen(true);
+			setTab("list"); // 작성 완료 후 자동으로 목록 탭 이동
+
+		} catch (error) {
+			console.error("민원 작성 요청 중 오류:", error);
+			alert("민원 요청 중 오류가 발생했습니다.");
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
+
+	// ✅ 탭이 'list'로 변경될 때 서버에서 민원 목록 조회
+	useEffect(() => {
+		if (tab === "list") {
+			const fetchComplaints = async () => {
+				setIsLoading(true);
+				try {
+					const res = await readComplaint();
+					if (res.success) {
+						setComplaints((res.data as Complaint[]) || []);
+
+					} else {
+						console.error("민원 목록 조회 실패:", res.error || res.message);
+					}
+				} catch (error) {
+					console.error("민원 조회 중 오류:", error);
+				} finally {
+					setIsLoading(false);
+				}
+			};
+			fetchComplaints();
+		}
+	}, [tab]);
+
 	return (
-		<div className="max-w-3xl mx-auto p-6">
-			<h1 className="text-2xl font-semibold mb-2">TPT 서비스의 불편함 또는 문의사항을 알려주세요.</h1>
+		<div className="max-w-3xl mx-auto p-6 mt-20">
+			<h1 className="text-2xl font-semibold mb-2">
+				TPT 서비스의 불편함 또는 문의사항을 알려주세요.
+			</h1>
 			<p className="text-gray-600 mt-6 mb-6">
 				항상 고객의 목소리에 귀 기울이는 TPT가 되겠습니다.
 			</p>
@@ -79,7 +103,7 @@ export default function CustomerCenter() {
 			<div className="flex border-b mb-6">
 				<button
 					onClick={() => setTab("write")}
-					className={`px-4 py-2 font-medium ${tab === "write"
+					className={`px-4 py-2 font-medium cursor-pointer ${tab === "write"
 						? "border-b-2 border-black text-black"
 						: "text-gray-500"
 						}`}
@@ -88,7 +112,7 @@ export default function CustomerCenter() {
 				</button>
 				<button
 					onClick={() => setTab("list")}
-					className={`px-4 py-2 font-medium ${tab === "list"
+					className={`px-4 py-2 font-medium cursor-pointer ${tab === "list"
 						? "border-b-2 border-black text-black"
 						: "text-gray-500"
 						}`}
@@ -132,7 +156,7 @@ export default function CustomerCenter() {
 							value={content}
 							onChange={(e) => setContent(e.target.value)}
 							placeholder="민원 내용을 입력하세요."
-							className="w-full bg-[#F4F4F4] rounded-md px-3 py-2 text-sm h-100"
+							className="w-full bg-[#F4F4F4] rounded-md px-3 py-2 text-sm h-40"
 						/>
 						{image && (
 							<div className="mt-2">
@@ -144,8 +168,12 @@ export default function CustomerCenter() {
 							</div>
 						)}
 					</div>
-					<CustomButton variant="prettyFull" onClick={handleSubmit}>
-						의견 전달하기
+					<CustomButton
+						variant="prettyFull"
+						onClick={handleSubmit}
+						disabled={isLoading}
+					>
+						{isLoading ? "전송 중..." : "의견 전달하기"}
 					</CustomButton>
 				</div>
 			)}
@@ -153,8 +181,13 @@ export default function CustomerCenter() {
 			{/* 내 민원 확인 */}
 			{tab === "list" && (
 				<div className="space-y-4">
-					{complaints.length === 0 && (
-						<p className="text-gray-500">등록된 민원이 없습니다.</p>
+					{isLoading && (
+						<p className="text-gray-500 text-center">불러오는 중...</p>
+					)}
+					{!isLoading && complaints.length === 0 && (
+						<p className="text-gray-500 text-center">
+							등록된 민원이 없습니다.
+						</p>
 					)}
 					{complaints.map((c) => (
 						<div
@@ -202,23 +235,18 @@ export default function CustomerCenter() {
 
 			{/* 성공 모달 */}
 			{isModalOpen && (
-				<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-					<div className="bg-white rounded-lg shadow-lg p-6 max-w-sm text-center">
-						<p className="mb-4">
-							민원이 성공적으로 접수되었습니다.
-							<br />
-							관리자가 확인 후 24시간 이내 최대한 빠르게 답변을 드릴 예정입니다.
-							<br />
-							TPT의 성장을 위한 소중한 의견 감사합니다.
-						</p>
-						<button
-							onClick={() => setIsModalOpen(false)}
-							className="mt-2 bg-indigo-200 hover:bg-indigo-300 px-4 py-2 rounded-md"
-						>
-							확인
-						</button>
-					</div>
-				</div>
+				<CustomModal variant={1} isOpen={isModalOpen} onClose={() => { setIsModalOpen(false) }} width="max-w-xl">
+					<p className="mb-4">
+						민원이 성공적으로 접수되었습니다.
+						<br />
+						관리자가 확인 후 24시간 이내 최대한 빠르게 답변을 드릴 예정입니다.
+						<br />
+						TPT의 성장을 위한 소중한 의견 감사합니다.
+					</p>
+					{/* <CustomButton variant="prettyFull" onClick={() => { setIsModalOpen(false) }}>
+						확인
+					</CustomButton> */}
+				</CustomModal>
 			)}
 		</div>
 	);

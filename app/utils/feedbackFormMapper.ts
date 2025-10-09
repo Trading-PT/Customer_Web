@@ -139,14 +139,17 @@ export const mapFreeFormData = (formData: any): FormData => {
 
 	fd.append("feedbackRequestDate", formData.feedbackRequestDate || new Date().toISOString().split("T")[0]);
 	// fd.append("feedbackRequestDate", "2025-10-09");
+	fd.append("feedbackYear", "2025"); // 스윙-필수 
+	fd.append("feedbackMonth", "10"); // 스윙-필수
+	fd.append("feedbackWeek", "2"); // 스윙-필수 
 
 	fd.append("category", formData.category || "string");
 	fd.append("positionHoldingTime", formData.positionHoldingTime || "");
 	if (formData.screenshot) fd.append("screenshotFiles", formData.screenshot);
 
 	fd.append("position", formData.position || "LONG");
-	fd.append("riskTaking", String(formData.risk || 0));
-	fd.append("leverage", String(formData.risk || 0));
+	fd.append("riskTaking", String(formData.riskTaking || 0));
+	fd.append("leverage", String(formData.riskTaking || 0)); // TODO: leverage 필드로 수정하기 
 	fd.append("pnl", String(formData.pl || 0));
 	fd.append("rnr", String(formData.rnr || 0));
 

@@ -43,8 +43,15 @@ export interface FindIdResult {
   userName: string;
 }
 
+export interface WriteComplaintRequest {
+  title: string;
+  content: string;
+}
+
 // 아이디 찾기에서 최종적으로 사용할 타입
 export type FindIdResponse = ApiResponse<FindIdResult>;
+
+export type WriteComplaint = ApiResponse<WriteComplaintRequest>;
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_URI;
 
@@ -258,10 +265,21 @@ class AuthAPI {
 
   // 스윙 피드백 요청
   async requestSwingFeedback(data: SwingFeedbackRequest): Promise<ApiResponse> {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value as any);
-    });
+    // const formData = new FormData();
+    // Object.entries(data).forEach(([key, value]) => {
+    //   formData.append(key, value as any);
+    // });
+
+    let formData: FormData;
+
+    if (data instanceof FormData) {
+      formData = data; // 이미 FormData라면 그대로 사용
+    } else {
+      formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value as any);
+      });
+    }
 
     return this.request("/api/v1/feedback-requests/swing", {
       method: "POST",
@@ -311,6 +329,22 @@ class AuthAPI {
     return this.request("/api/v1/feedback-requests/scalping", {
       method: "POST",
       body: formData,
+    });
+  }
+
+  // 민원 작성하기 
+  async writeComplaint(title: string, content: string): Promise<WriteComplaint> {
+    return this.request<WriteComplaintRequest>('/api/v1/complaint', {
+      method: 'POST',
+      // headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content }),
+    });
+  }
+
+  // 민원 조회하기 
+  async readComplaint(): Promise<WriteComplaint> {
+    return this.request<WriteComplaintRequest>('/api/v1/complaint', {
+      method: 'GET'
     });
   }
 }
