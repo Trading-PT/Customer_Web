@@ -1,57 +1,86 @@
-interface SignupRequest {
-  name: string;
-  phone: string;
-  email: string;
-  username: string;
-  password: string;
-  passwordCheck: string; // 비밀번호 확인
-  termsService: boolean;
-  termsPrivacy: boolean;
-  termsMarketing?: boolean; // 선택
-  investmentType?: string;
-  uids: {
-    exchangeName: string;
-    uid: string;
-  }[]; // 거래소 UID 리스트
-}
+// interface SignupRequest {
+//   name: string;
+//   phone: string;
+//   email: string;
+//   username: string;
+//   password: string;
+//   passwordCheck: string; // 비밀번호 확인
+//   termsService: boolean;
+//   termsPrivacy: boolean;
+//   termsMarketing?: boolean; // 선택
+//   investmentType?: string;
+//   uids: {
+//     exchangeName: string;
+//     uid: string;
+//   }[]; // 거래소 UID 리스트
+// }
 
 
-interface LoginRequest {
-  username: string;
-  password: string;
-  rememberMe?: boolean;
-}
+// interface LoginRequest {
+//   username: string;
+//   password: string;
+//   rememberMe?: boolean;
+// }
 
-// 서버가 내려주는 원본 응답 구조
-export interface ServerResponse<T> {
-  timestamp: string;
-  code: string;
-  message: string;
-  result: T;
-}
+// // 서버가 내려주는 원본 응답 구조
+// export interface ServerResponse<T> {
+//   timestamp: string;
+//   code: string;
+//   message: string;
+//   result: T;
+// }
 
-interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-  status?: number;
-}
+// interface ApiResponse<T = unknown> {
+//   success: boolean;
+//   data?: T;
+//   message?: string;
+//   error?: string;
+//   status?: number;
+// }
 
-// 아이디 찾기 응답에 맞는 result 타입
-export interface FindIdResult {
-  userName: string;
-}
+// // 아이디 찾기 응답에 맞는 result 타입
+// export interface FindIdResult {
+//   userName: string;
+// }
+// // 아이디 찾기에서 최종적으로 사용할 타입
+// export type FindIdResponse = ApiResponse<FindIdResult>;
 
-export interface WriteComplaintRequest {
-  title: string;
-  content: string;
-}
+// // 민원 작성 타입 
+// export interface WriteComplaintRequest {
+//   title: string;
+//   content: string;
+// }
 
-// 아이디 찾기에서 최종적으로 사용할 타입
-export type FindIdResponse = ApiResponse<FindIdResult>;
+// export type WriteComplaint = ApiResponse<WriteComplaintRequest>;
 
-export type WriteComplaint = ApiResponse<WriteComplaintRequest>;
+// // 단일 민원 데이터 구조
+// export interface ComplaintResponse {
+//   id: number;
+//   title: string;
+//   content: string;
+//   complaintReply: string | null;
+//   answeredAt: string | null;
+//   createdAt: string;
+// }
+
+// // 전체 반환 타입 (민원 목록)
+// export type ReadComplaintResponse = ComplaintResponse[];
+
+import {
+  ApiResponse,
+  ServerResponse,
+  SignupRequest,
+  LoginRequest,
+  FindIdResult,
+  FindIdResponse,
+  WriteComplaintRequest,
+  WriteComplaint,
+  ComplaintResponse,
+  ReadComplaintResponse,
+  SwingFeedbackRequest,
+  DayFeedbackRequest,
+  ScalpingFeedbackRequest,
+} from './apiTypes';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_URI;
 
@@ -306,7 +335,7 @@ class AuthAPI {
       });
     }
 
-    // ✅ 최종 전송 FormData 디버깅
+    // 최종 전송 FormData 디버깅
     console.log("----------- 최종 FormData (entries) -----------");
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);
@@ -341,86 +370,86 @@ class AuthAPI {
     });
   }
 
-  // 민원 조회하기 
-  async readComplaint(): Promise<WriteComplaint> {
-    return this.request<WriteComplaintRequest>('/api/v1/complaint', {
-      method: 'GET'
+  /** 민원 조회 */
+  async readComplaint(): Promise<ReadComplaintResponse> {
+    return this.request<ComplaintResponse[]>("/api/v1/complaint", {
+      method: "GET",
     });
   }
 }
 
 export const authAPI = new AuthAPI();
-export type { SignupRequest, LoginRequest, ApiResponse };
+// export type { SignupRequest, LoginRequest, ApiResponse };
 
-// 피드백 요청 관련 타입
-export interface SwingFeedbackRequest {
-  positionEndDate: string;
-  feedbackYear: number;
-  trainerFeedbackRequestContent: string;
-  positionStartDate: string;
-  positionHoldingTime: string;
-  position: string;
-  winLossRatio: string;
-  subFrame: string;
-  courseStatus: string;
-  directionFrame: string;
-  membershipLevel: string;
-  pnl: number;
-  screenshotFiles: File | string; // string은 mock 테스트용
-  riskTaking: number;
-  entryPoint1: string;
-  preCourseFeedbackDetail: string; // JSON string
-  mainFrame: string;
-  entryPoint2: string;
-  leverage: number;
-  entryPoint3: string;
-  grade: string;
-  feedbackWeek: number;
-  trendAnalysis: string;
-  tradingReview: string;
-  feedbackMonth: number;
-  requestDate: string;
-  category: string;
-}
+// // 피드백 요청 관련 타입
+// export interface SwingFeedbackRequest {
+//   positionEndDate: string;
+//   feedbackYear: number;
+//   trainerFeedbackRequestContent: string;
+//   positionStartDate: string;
+//   positionHoldingTime: string;
+//   position: string;
+//   winLossRatio: string;
+//   subFrame: string;
+//   courseStatus: string;
+//   directionFrame: string;
+//   membershipLevel: string;
+//   pnl: number;
+//   screenshotFiles: File | string; // string은 mock 테스트용
+//   riskTaking: number;
+//   entryPoint1: string;
+//   preCourseFeedbackDetail: string; // JSON string
+//   mainFrame: string;
+//   entryPoint2: string;
+//   leverage: number;
+//   entryPoint3: string;
+//   grade: string;
+//   feedbackWeek: number;
+//   trendAnalysis: string;
+//   tradingReview: string;
+//   feedbackMonth: number;
+//   requestDate: string;
+//   category: string;
+// }
 
-export interface DayFeedbackRequest {
-  trainerFeedbackRequestContent: string;
-  positionHoldingTime: string;
-  position: string;
-  directionFrameExists: boolean;
-  winLossRatio: string;
-  subFrame: string;
-  courseStatus: string;
-  directionFrame: string;
-  membershipLevel: string;
-  pnl: number;
-  screenshotFiles: File | string;
-  riskTaking: number;
-  entryPoint1: string;
-  preCourseFeedbackDetail: string;
-  mainFrame: string;
-  entryPoint2: string;
-  leverage: number;
-  grade: string;
-  trendAnalysis: string;
-  tradingReview: string;
-  requestDate: string;
-  category: string;
-}
+// export interface DayFeedbackRequest {
+//   trainerFeedbackRequestContent: string;
+//   positionHoldingTime: string;
+//   position: string;
+//   directionFrameExists: boolean;
+//   winLossRatio: string;
+//   subFrame: string;
+//   courseStatus: string;
+//   directionFrame: string;
+//   membershipLevel: string;
+//   pnl: number;
+//   screenshotFiles: File | string;
+//   riskTaking: number;
+//   entryPoint1: string;
+//   preCourseFeedbackDetail: string;
+//   mainFrame: string;
+//   entryPoint2: string;
+//   leverage: number;
+//   grade: string;
+//   trendAnalysis: string;
+//   tradingReview: string;
+//   requestDate: string;
+//   category: string;
+// }
 
-export interface ScalpingFeedbackRequest {
-  trainerFeedbackRequestContent: string;
-  dailyTradingCount: number;
-  positionHoldingTime: string;
-  courseStatus: string;
-  membershipLevel: string;
-  screenshotFiles: File | string;
-  riskTaking: number;
-  preCourseFeedbackDetail: string;
-  leverage: number;
-  totalProfitMarginPerTrades: number;
-  trendAnalysis: string;
-  requestDate: string;
-  category: string;
-  totalPositionTakingCount: number;
-}
+// export interface ScalpingFeedbackRequest {
+//   trainerFeedbackRequestContent: string;
+//   dailyTradingCount: number;
+//   positionHoldingTime: string;
+//   courseStatus: string;
+//   membershipLevel: string;
+//   screenshotFiles: File | string;
+//   riskTaking: number;
+//   preCourseFeedbackDetail: string;
+//   leverage: number;
+//   totalProfitMarginPerTrades: number;
+//   trendAnalysis: string;
+//   requestDate: string;
+//   category: string;
+//   totalPositionTakingCount: number;
+// }

@@ -15,6 +15,7 @@ type Complaint = {
 	answer?: string;
 };
 
+
 export default function CustomerCenter() {
 	const [tab, setTab] = useState<"write" | "list">("write");
 	const [title, setTitle] = useState("");
@@ -24,10 +25,10 @@ export default function CustomerCenter() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
-	// ✅ API hook 연결
+	// API hook 연결
 	const { writeComplaint, readComplaint } = useAuth();
 
-	// ✅ 이미지 업로드
+	// 이미지 업로드
 	const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
@@ -36,7 +37,7 @@ export default function CustomerCenter() {
 		reader.readAsDataURL(file);
 	};
 
-	// ✅ 민원 작성
+	// 민원 작성
 	const handleSubmit = async () => {
 		if (!title || !content) return alert("제목과 내용을 모두 입력해주세요.");
 
@@ -44,14 +45,14 @@ export default function CustomerCenter() {
 			setIsLoading(true);
 			const res = await writeComplaint(title, content);
 
-			// ✅ 서버 응답이 실패했거나 success가 false인 경우
+			// 서버 응답이 실패했거나 success가 false인 경우
 			if (!res || !res.success) {
 				console.error("민원 작성 실패:", res?.error || res?.message);
 				alert("민원 접수에 실패했습니다. 다시 시도해주세요.");
-				return; // 🚫 아래 코드 실행 방지
+				return;
 			}
 
-			// ✅ 성공 시
+			// 성공 시
 			setTitle("");
 			setContent("");
 			setImage(undefined);
@@ -67,16 +68,30 @@ export default function CustomerCenter() {
 	};
 
 
-	// ✅ 탭이 'list'로 변경될 때 서버에서 민원 목록 조회
+	// 탭이 'list'로 변경될 때 서버에서 민원 목록 조회
 	useEffect(() => {
 		if (tab === "list") {
 			const fetchComplaints = async () => {
 				setIsLoading(true);
 				try {
 					const res = await readComplaint();
-					if (res.success) {
-						setComplaints((res.data as Complaint[]) || []);
+					console.log("res:", res);
 
+					if (res.success) {
+						const rawData = res.data as any[];
+						console.log("rawData:", rawData);
+
+						const mapped: Complaint[] = rawData.map((c) => ({
+							id: c.id,
+							title: c.title,
+							content: c.content,
+							createdAt: c.createdAt,
+							image: c.image ?? undefined,
+							status: c.answeredAt ? "answered" : "pending",
+							answer: c.complaintReply ?? undefined,
+						}));
+
+						setComplaints(mapped);
 					} else {
 						console.error("민원 목록 조회 실패:", res.error || res.message);
 					}
@@ -86,6 +101,7 @@ export default function CustomerCenter() {
 					setIsLoading(false);
 				}
 			};
+
 			fetchComplaints();
 		}
 	}, [tab]);
@@ -243,9 +259,6 @@ export default function CustomerCenter() {
 						<br />
 						TPT의 성장을 위한 소중한 의견 감사합니다.
 					</p>
-					{/* <CustomButton variant="prettyFull" onClick={() => { setIsModalOpen(false) }}>
-						확인
-					</CustomButton> */}
 				</CustomModal>
 			)}
 		</div>
