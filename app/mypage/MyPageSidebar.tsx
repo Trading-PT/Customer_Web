@@ -13,30 +13,57 @@ import {
 	Replace,
 } from "lucide-react";
 import ProfileImageUploader from "./profileImageUploader";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CustomModal from "../components/CustomModal"; // variant={1}
 import { useAuthStore } from "../stores/authStore";
 import { useAuth } from "../hooks/useAuth";
 import ResetPasswordAuthModal from "./ResetPasswordAuthModal";
+import { UserStatus } from "../mocks/status";
 
-type Props = {
+type UserData = {
 	name: string;
+	username: string;
 	email: string;
-	phone: string;
+	phone?: string;
+	profileImage?: string | null;
+	investmentType: string;
+	userStatus: UserStatus;
+	exchangeName: string;
+	uid: string;
+	trainerId: number | null;
+	trainerName: string | null;
+	isCourseCompleted: boolean;
+	isPremium: boolean;
+	paymentMethod: string;
 };
 
-export default function MyPageSidebar({ name, email, phone }: Props) {
+type Props = {
+	userData: UserData;
+};
+
+export default function MyPageSidebar({ userData }: Props) {
 	const router = useRouter();
-	const [profileImage, setProfileImage] = useState<string | null>(null);
-
-	// Modal 상태 관리
-	const [openModal, setOpenModal] = useState<null | "password" | "uid" | "type" | "withdraw">(null);
-	const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
-
-	// authStore
 	const { logout } = useAuthStore();
 	const { deleteUser } = useAuth();
 
+	// TODO: 프로필 사진 변경 API 연동하기 
+
+	// 프로필 이미지 설정
+	const [profileImage, setProfileImage] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (userData?.profileImage) {
+			setProfileImage(userData.profileImage);
+		} else {
+			setProfileImage("/images/defaultProfile.svg"); // 기본 이미지
+		}
+	}, [userData?.profileImage]);
+
+	// 모달 상태 관리
+	const [openModal, setOpenModal] = useState<null | "password" | "uid" | "type" | "withdraw">(null);
+	const [resetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
+
+	// 로그아웃 / 회원탈퇴
 	const handleLogout = () => {
 		logout();
 		router.push("/login");
@@ -46,13 +73,11 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 		const confirmed = window.confirm(
 			"정말로 탈퇴하시겠습니까?\n탈퇴하시면 보유 데이터가 전부 삭제됩니다."
 		);
-
 		if (!confirmed) return;
-
 		await deleteUser();
 	};
 
-
+	// 프로필 변경
 	const handleProfileImageChange = (file: File) => {
 		const imageUrl = URL.createObjectURL(file);
 		setProfileImage(imageUrl);
@@ -61,35 +86,35 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 	return (
 		<aside
 			className="
-		w-full md:w-64 
-		bg-[#0f172a] text-white 
-		flex flex-col md:flex-col 
-		py-6 md:py-10
-		relative md:sticky md:top-0
-	"
+				w-full md:w-64 
+				bg-[#0f172a] text-white 
+				flex flex-col md:flex-col 
+				py-6 md:py-10
+				relative md:sticky md:top-0
+			"
 		>
-			{/* 모바일에서는 row, 데스크탑에서는 column */}
+			{/* 프로필 섹션 */}
 			<div className="flex flex-col md:flex-col md:items-center md:flex-1 gap-6 md:gap-3 md:mb-8 p-3">
-				{/* 프로필 */}
+				{/* 프로필 이미지 */}
 				<div className="flex flex-col items-center gap-2">
 					<ProfileImageUploader profileImage={profileImage} onChange={handleProfileImageChange} />
-					<span className="font-semibold text-base md:text-lg">{name} 님</span>
+					<span className="font-semibold text-base md:text-lg">{userData.name} 님</span>
 				</div>
 
 				{/* 계정 정보 */}
 				<div
 					className="
-				bg-white/10 rounded-lg 
-				px-4 py-3 
-				w-full md:w-52 
-				text-xs md:text-sm
-			"
+						bg-white/10 rounded-lg 
+						px-4 py-3 
+						w-full md:w-52 
+						text-xs md:text-sm
+					"
 				>
 					<p className="flex items-center gap-2">
-						<Mail size={16} /> {email}
+						<Mail size={16} /> {userData.email}
 					</p>
 					<p className="flex items-center gap-2 mt-1">
-						<Phone size={16} /> {phone}
+						<Phone size={16} /> {userData.phone || "등록된 전화번호가 없어요."}
 					</p>
 				</div>
 
@@ -113,17 +138,17 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 			{/* 로그아웃 및 기타 */}
 			<div
 				className="
-			flex flex-row md:flex-col 
-			justify-around md:justify-start 
-			items-center gap-4 md:gap-3 
-			w-full md:w-52 mt-6 md:mt-auto
-		"
+					flex flex-row md:flex-col 
+					justify-around md:justify-start 
+					items-center gap-4 md:gap-3 
+					w-full md:w-52 mt-6 md:mt-auto
+				"
 			>
 				<button onClick={handleLogout} className="flex items-center gap-2 text-xs md:text-sm cursor-pointer">
 					<LogOut size={16} /> LOG OUT
 				</button>
 				<button
-					onClick={() => router.push('/customercenter')}
+					onClick={() => router.push("/customercenter")}
 					className="flex items-center gap-2 text-xs md:text-sm cursor-pointer"
 				>
 					<Headphones size={16} /> 고객센터
@@ -137,11 +162,13 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 			</div>
 
 			{/* 모달 관리 */}
+			{/* 비밀번호 변경 */}
 			<CustomModal variant={1} isOpen={openModal === "password"} onClose={() => setOpenModal(null)} width="max-w-xl">
 				<h2 className="text-lg mb-4">비밀번호 변경</h2>
 				<p>비밀번호 변경 기능 구현</p>
 			</CustomModal>
 
+			{/* 로그인 상태 비밀번호 변경 모달 */}
 			{resetPasswordModalOpen && (
 				<ResetPasswordAuthModal
 					isOpen={resetPasswordModalOpen}
@@ -149,16 +176,28 @@ export default function MyPageSidebar({ name, email, phone }: Props) {
 				/>
 			)}
 
+			{/* UID 관리 모달 */}
 			<CustomModal variant={1} isOpen={openModal === "uid"} onClose={() => setOpenModal(null)} width="max-w-xl">
-				<h2 className="text-lg mb-4">UID 관리</h2>
-				<p>UID 관리 기능 구현</p>
+				<h2 className="text-lg mb-4 font-semibold">UID 관리</h2>
+				<div className="space-y-2 text-sm text-gray-200">
+					<p>
+						<span className="font-medium text-black">거래소명: {userData.exchangeName}</span>
+					</p>
+					<p>
+						<span className="font-medium text-black">UID: {userData.uid}</span>
+					</p>
+				</div>
 			</CustomModal>
 
+			{/* 투자유형 변경 모달 */}
 			<CustomModal variant={1} isOpen={openModal === "type"} onClose={() => setOpenModal(null)} width="max-w-xl">
-				<h2 className="text-lg mb-4">투자유형 변경</h2>
-				<p>투자유형 변경 기능 구현</p>
+				<h2 className="text-lg mb-4 font-semibold">투자유형 변경</h2>
+				<p className="text-sm text-black">
+					현재 투자 유형: <span className="font-medium text-black">{userData.investmentType}</span>
+				</p>
 			</CustomModal>
 
+			{/* 회원 탈퇴 모달 */}
 			<CustomModal variant={1} isOpen={openModal === "withdraw"} onClose={() => setOpenModal(null)} width="max-w-xl">
 				<p className="text-center">정말로 회원 탈퇴하시겠습니까?</p>
 			</CustomModal>

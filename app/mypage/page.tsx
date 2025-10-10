@@ -30,12 +30,24 @@ export default function MyPage() {
 
 	const { myInfo } = useAuth();
 	const [userData, setUserData] = useState<{
-		name: string;
-		username: string,
+		name: string; // 이름 
+		username: string, // 닉네임 
 		email: string;
-		phone?: string | null;
-		profileImage?: string | null;
-		userStatus: UserStatus,
+		phone?: string;
+		profileImage?: string | null; // 나중에 기본 이미지 처리하기 
+
+		investmentType: string, // 투자 유형 
+		userStatus: UserStatus, // 사용자 상태
+		exchangeName: string, // 거래소 이름 
+		uid: string, // UID
+
+		trainerId: number | null, // 구독 X인 경우 트레이너 없음 
+		trainerName: string | null,
+
+		isCourseCompleted: boolean, // 완강 여부
+		isPremium: boolean, // 구독 고객인지 여부 
+
+		paymentMethod: string // 결제수단 
 	} | null>(null);
 
 	useEffect(() => {
@@ -46,19 +58,28 @@ export default function MyPage() {
 			if (res && res.data) {
 				setUserData({
 					name: res.data.name,
-					username: res.data.username, // 닉네임
-					email: res.data.username,    // API에 email 필드 없으니 임시로 username
-					phone: null,                 // 아직 전화번호 없음
-					profileImage: null,          // 아직 프사 없음
+					username: res.data.username,
+					email: res.data.email,
+					phone: res.data.phoneNumber,
+					profileImage: res.data.profileImage ?? null,
+
+					investmentType: res.data.investmentType,
 					userStatus: res.data.userStatus as UserStatus,
+					exchangeName: res.data.exchangeName,
+					uid: res.data.uid,
+
+					trainerId: res.data.trainerId,
+					trainerName: res.data.trainerNAme,
+
+					isCourseCompleted: res.data.isCourseCompleted,
+					isPremium: res.data.isPremium,
+					paymentMethod: res.data.paymentMethod,
 				});
 			}
 		};
 
 		fetchUserInfo();
 	}, []);
-
-	// 25.09.29 dev 브랜치 분기점 
 
 	return (
 		<div className="flex bg-white flex-col md:flex-row h-auto md:h-screen">
@@ -68,12 +89,10 @@ export default function MyPage() {
 			{/* 로그인한 계정의 실제 status에 따른 컴포넌트입니다 */}
 			{userData ? (
 				<MyPageSidebar
-					name={userData.name}
-					email={mockUser.email}
-					phone={mockUser.phone}
+					userData={userData}
 				/>
 			) : (
-				<MyPageSidebarSkeleton /> // ✅ 로딩 중일 때
+				<MyPageSidebarSkeleton />
 			)}
 
 			{/* 테스트용으로, 위의 mockData 바꿔서 볼 수 있는 컴포넌트입니다 */}
