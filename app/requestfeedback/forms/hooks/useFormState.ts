@@ -10,6 +10,7 @@ export function useFormState(riskTaking: number = 5) {
 		entryPrice: "",
 		exitPrice: "",
 		riskTaking: riskTaking.toString(),
+		leverage: "0",
 		settingStopLoss: "",
 		settingTakeProfit: "",
 		positionStartReason: "",

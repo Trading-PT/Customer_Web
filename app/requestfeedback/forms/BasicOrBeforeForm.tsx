@@ -184,16 +184,28 @@ export default function BasicOrBeforeForm({
 				</div>
 			</div>
 
-			{/* 리스크 테이킹 */}
-			<div>
-				<label className="block mb-1 font-medium">리스크 테이킹 (%)</label>
-				<input
-					type="number"
-					name="riskTaking"
-					value={form.riskTaking}
-					onChange={handleChange}
-					className="bg-[#F4F4F4] rounded p-2 w-full"
-				/>
+			{/* 리스크 테이킹 / 레버리지 */}
+			<div className="flex gap-4">
+				<div className="flex-1">
+					<label className="block mb-1 font-medium">리스크 테이킹 (%)</label>
+					<input
+						type="number"
+						name="riskTaking"
+						value={form.riskTaking}
+						onChange={handleChange}
+						className="bg-[#F4F4F4] rounded p-2 w-full"
+					/>
+				</div>
+				<div className="flex-1">
+					<label className="block mb-1 font-medium">레버리지 (배점)</label>
+					<input
+						type="number"
+						name="leverage"
+						value={form.leverage}
+						onChange={handleChange}
+						className="bg-[#F4F4F4] rounded p-2 w-full"
+					/>
+				</div>
 			</div>
 
 			{/* 손절 / 익절 */}
