@@ -2,121 +2,78 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Crown } from "lucide-react";
-
-type Feedback = {
-	id: number;
-	title: string;
-	content: string;
-	date: string;
-	isCrown?: boolean;
-	year: string;
-	month: string;
-	week: string;
-	day: string;
-	time: string;
-};
+import { feedbackAPI } from "../lib/api/feedbackAPI";
+import { FeedbackCardDTO } from "../lib/api/apiTypes";
 
 export default function AllFeedback() {
-	const [crownFeedbacks, setCrownFeedbacks] = useState<Feedback[]>([]);
-	const [otherFeedbacks, setOtherFeedbacks] = useState<Feedback[]>([]);
+	const [crownFeedbacks, setCrownFeedbacks] = useState<FeedbackCardDTO[]>([]);
+	const [otherFeedbacks, setOtherFeedbacks] = useState<FeedbackCardDTO[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const [hasMore, setHasMore] = useState(false);
+	const [currentPage, setCurrentPage] = useState(0);
 	const router = useRouter();
 
-	const handleNavigate = (fb: Feedback) => {
-		router.push(
-			`/timefeedback?year=${fb.year}&month=${fb.month}&week=${fb.week}&day=${fb.day}&time=${fb.time}&title=${encodeURIComponent(fb.title)}`
-		);
+	const handleNavigate = (fb: FeedbackCardDTO) => {
+		// feedbackRequestId를 사용하여 상세 페이지로 이동
+		router.push(`/timefeedback?id=${fb.feedbackRequestId}`);
 	};
 
-	// mockData (props 값 포함)
-	const mockData: Feedback[] = [
-		{
-			id: 1,
-			title: "8/24 (1) 작성 완료",
-			content: "안녕하세요 트레이너님! ...",
-			date: "2025.8.3.21:51",
-			isCrown: true,
-			year: "2025",
-			month: "8",
-			week: "셋째 주",
-			day: "24",
-			time: "21:51:00",
-		},
-		{
-			id: 2,
-			title: "8/24 (2) 작성 완료",
-			content: "이번엔 다르게 기업을 골라봤...",
-			date: "2025.8.3.23:35",
-			isCrown: true,
-			year: "2025",
-			month: "8",
-			week: "셋째 주",
-			day: "24",
-			time: "23:35:59",
-		},
-		{
-			id: 3,
-			title: "8/24 (2) 작성 완료",
-			content: "이번엔 다르게 기업을 골라봤...",
-			date: "2025.8.3.23:35",
-			isCrown: true,
-			year: "2025",
-			month: "8",
-			week: "셋째 주",
-			day: "24",
-			time: "23:35:59",
-		},
-		{
-			id: 4,
-			title: "8/24 (3) 작성 완료",
-			content: "또 다른 피드백입니다...",
-			date: "2025.8.3.23:59",
-			year: "2025",
-			month: "8",
-			week: "셋째 주",
-			day: "24",
-			time: "23:59:59",
-		},
-		{
-			id: 5,
-			title: "8/24 (3) 작성 완료",
-			content: "또 다른 피드백입니다...",
-			date: "2025.8.3.23:59",
-			year: "2025",
-			month: "8",
-			week: "셋째 주",
-			day: "24",
-			time: "23:59:59",
-		},
-		{
-			id: 6,
-			title: "8/24 (3) 작성 완료",
-			content: "또 다른 피드백입니다...",
-			date: "2025.8.3.23:59",
-			year: "2025",
-			month: "8",
-			week: "셋째 주",
-			day: "24",
-			time: "23:59:59",
-		},
-		{
-			id: 7,
-			title: "8/24 (3) 작성 완료",
-			content: "또 다른 피드백입니다...",
-			date: "2025.8.3.23:59",
-			year: "2025",
-			month: "8",
-			week: "셋째 주",
-			day: "24",
-			time: "23:59:59",
-		},
-	]
+	const loadFeedbacks = async (page: number = 0) => {
+		try {
+			setLoading(true);
+			const response = await feedbackAPI.getFeedbackRequests(page, 12);
+
+			if (response.success && response.data) {
+				const feedbacks = response.data.feedbacks;
+				const crowns = feedbacks.filter((f) => f.isBestFeedback);
+				const others = feedbacks.filter((f) => !f.isBestFeedback);
+
+				if (page === 0) {
+					// 첫 페이지는 덮어쓰기
+					setCrownFeedbacks(crowns);
+					setOtherFeedbacks(others);
+				} else {
+					// 다음 페이지는 추가
+					setCrownFeedbacks((prev) => [...prev, ...crowns]);
+					setOtherFeedbacks((prev) => [...prev, ...others]);
+				}
+
+				setHasMore(response.data.sliceInfo.hasNext);
+				setCurrentPage(page);
+			} else {
+				setError(response.message || "피드백 목록을 불러오는데 실패했습니다.");
+			}
+		} catch (err) {
+			console.error("피드백 목록 조회 오류:", err);
+			setError("네트워크 오류가 발생했습니다.");
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		const crowns = mockData.filter((f) => f.isCrown);
-		const others = mockData.filter((f) => !f.isCrown);
-		setCrownFeedbacks(crowns);
-		setOtherFeedbacks(others);
+		loadFeedbacks(0);
 	}, []);
+
+	// 날짜 포맷팅 함수
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = date.getMonth() + 1;
+		const day = date.getDate();
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		return `${year}.${month}.${day}.${hours}:${minutes}`;
+	};
+
+	if (error) {
+		return (
+			<div className="max-w-6xl mx-auto p-6 pt-20">
+				<div className="text-center text-red-500">{error}</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="max-w-6xl mx-auto p-6 pt-20">
@@ -124,43 +81,71 @@ export default function AllFeedback() {
 				TPT의 실시간 트레이딩 피드백을 둘러보세요.
 			</h1>
 
-			{/* 상단 베스트 피드백 */}
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-				{crownFeedbacks.map((fb) => (
-					<button
-						key={fb.id}
-						onClick={() => handleNavigate(fb)}
-						className="cursor-pointer relative bg-gray-100 rounded-lg p-4 flex flex-col justify-between text-left hover:shadow-md transition-shadow"
-					>
-						{/* Crown 아이콘 */}
-						<div className="absolute -top-3 left-4 z-10">
-							<Crown size={24} className="text-yellow-500 drop-shadow-md" />
-						</div>
+			{loading && currentPage === 0 ? (
+				<div className="text-center py-10">로딩 중...</div>
+			) : (
+				<>
+					{/* 상단 베스트 피드백 */}
+					{crownFeedbacks.length > 0 && (
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+							{crownFeedbacks.map((fb) => (
+								<button
+									key={fb.feedbackRequestId}
+									onClick={() => handleNavigate(fb)}
+									className="cursor-pointer relative bg-gray-100 rounded-lg p-4 flex flex-col justify-between text-left hover:shadow-md transition-shadow"
+								>
+									{/* Crown 아이콘 */}
+									<div className="absolute -top-3 left-4 z-10">
+										<Crown size={24} className="text-yellow-500 drop-shadow-md" />
+									</div>
 
-						{/* 카드 본문 */}
-						<div className="mt-4">
-							<span className="font-semibold block mb-2">{fb.title}</span>
-							<p className="text-sm text-gray-700 mb-4">{fb.content}</p>
-							<p className="text-xs text-gray-500 text-right">{fb.date}</p>
+									{/* 카드 본문 */}
+									<div className="mt-4">
+										<span className="font-semibold block mb-2">{fb.title}</span>
+										<p className="text-sm text-gray-700 mb-4 line-clamp-2">{fb.contentPreview}</p>
+										<p className="text-xs text-gray-500 text-right">{formatDate(fb.createdAt)}</p>
+									</div>
+								</button>
+							))}
 						</div>
-					</button>
-				))}
-			</div>
+					)}
 
-			{/* 일반 피드백 */}
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-				{otherFeedbacks.map((fb) => (
-					<button
-						key={fb.id}
-						onClick={() => handleNavigate(fb)}
-						className="cursor-pointer bg-gray-100 rounded-lg p-4 flex flex-col justify-between text-left hover:shadow-md transition-shadow"
-					>
-						<span className="font-semibold mb-2">{fb.title}</span>
-						<p className="text-sm text-gray-700 mb-4">{fb.content}</p>
-						<p className="text-xs text-gray-500 text-right">{fb.date}</p>
-					</button>
-				))}
-			</div>
+					{/* 일반 피드백 */}
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+						{otherFeedbacks.map((fb) => (
+							<button
+								key={fb.feedbackRequestId}
+								onClick={() => handleNavigate(fb)}
+								className="cursor-pointer bg-gray-100 rounded-lg p-4 flex flex-col justify-between text-left hover:shadow-md transition-shadow"
+							>
+								<span className="font-semibold mb-2">{fb.title}</span>
+								<p className="text-sm text-gray-700 mb-4 line-clamp-2">{fb.contentPreview}</p>
+								<p className="text-xs text-gray-500 text-right">{formatDate(fb.createdAt)}</p>
+							</button>
+						))}
+					</div>
+
+					{/* 더보기 버튼 */}
+					{hasMore && (
+						<div className="text-center mt-8">
+							<button
+								onClick={() => loadFeedbacks(currentPage + 1)}
+								disabled={loading}
+								className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+							>
+								{loading ? "로딩 중..." : "더보기"}
+							</button>
+						</div>
+					)}
+
+					{/* 피드백 없음 */}
+					{!loading && crownFeedbacks.length === 0 && otherFeedbacks.length === 0 && (
+						<div className="text-center py-10 text-gray-500">
+							등록된 피드백이 없습니다.
+						</div>
+					)}
+				</>
+			)}
 		</div>
 	);
 }

@@ -287,3 +287,175 @@ export interface BeforeCompletedCourseWeeklySummary extends WeeklySummaryRespons
 	performanceComparison: PerformanceComparisonWeekSnapshot;
 	memo?: string;
 }
+
+
+/* ------------------ 피드백 요청 조회 관련 ------------------ */
+
+/** 포지션 타입 */
+export type Position = "LONG" | "SHORT";
+
+/** 진입 타점 */
+export type EntryPoint = "REVERSE" | "PULL_BACK" | "BREAK_OUT";
+
+/** 등급 */
+export type Grade = "S_PLUS" | "S" | "A" | "B" | "NONE";
+
+/** 슬라이스 정보 (무한 스크롤용) */
+export interface SliceInfo {
+	currentPage: number;
+	pageSize: number;
+	hasNext: boolean;
+	isFirst: boolean;
+	isLast: boolean;
+}
+
+/** 피드백 카드 DTO (목록용) */
+export interface FeedbackCardDTO {
+	feedbackRequestId: number;
+	title: string;
+	contentPreview: string;
+	createdAt: string;
+	investmentType: InvestmentType;
+	courseStatus: CourseStatus;
+	status: FeedbackStatus;
+	isBestFeedback: boolean;
+	customerName?: string;
+}
+
+/** 피드백 요청 목록 응답 */
+export interface FeedbackListResponseDTO {
+	feedbacks: FeedbackCardDTO[];
+	sliceInfo: SliceInfo;
+}
+
+/** 트레이너 정보 */
+export interface TrainerDTO {
+	id: number;
+	name: string;
+	profileImageUrl?: string;
+}
+
+/** 피드백 답변 DTO */
+export interface FeedbackResponseDTO {
+	id: number;
+	title: string;
+	submittedAt: string;
+	trainer: TrainerDTO;
+	content: string;
+}
+
+/** 데이 트레이딩 피드백 요청 상세 응답 */
+export interface DayFeedbackRequestDetailResponseDTO {
+	id: number;
+	createdAt: string;
+	investmentType: InvestmentType;
+	courseStatus: CourseStatus;
+	feedbackYear: number;
+	feedbackMonth: number;
+	feedbackWeek: number;
+	feedbackRequestDate: string;
+	status: FeedbackStatus;
+	isBestFeedback: boolean;
+	updatedAt: string;
+	category: string;
+	positionHoldingTime: string;
+	screenshotImageUrls: string[];
+	riskTaking: number;
+	leverage: number;
+	positionStartDate: string;
+	positionEndDate: string;
+	position: Position;
+	positionStartReason: string;
+	positionEndReason: string;
+	trainerFeedbackRequestContent: string;
+	directionFrameExists: boolean;
+	directionFrame?: string;
+	mainFrame: string;
+	subFrame: string;
+	trendAnalysis: string;
+	pnl: number;
+	rnr: number;
+	entryPoint1: EntryPoint;
+	grade: Grade;
+	entryPoint2?: string;
+	tradingReview: string;
+}
+
+/** 스켈핑 트레이딩 피드백 요청 상세 응답 */
+export interface ScalpingFeedbackRequestDetailResponseDTO {
+	id: number;
+	createdAt: string;
+	investmentType: InvestmentType;
+	courseStatus: CourseStatus;
+	feedbackYear: number;
+	feedbackMonth: number;
+	feedbackWeek: number;
+	feedbackRequestDate: string;
+	status: FeedbackStatus;
+	isBestFeedback: boolean;
+	updatedAt: string;
+	category: string;
+	positionHoldingTime: string;
+	screenshotImageUrls: string[];
+	riskTaking: number;
+	leverage: number;
+	position: Position;
+	pnl: number;
+	rnr: number;
+	operatingFundsRatio: number;
+	entryPrice: number;
+	exitPrice: number;
+	settingStopLoss: number;
+	settingTakeProfit: number;
+	positionStartReason: string;
+	positionEndReason: string;
+	tradingReview: string;
+}
+
+/** 스윙 트레이딩 피드백 요청 상세 응답 */
+export interface SwingFeedbackRequestDetailResponseDTO {
+	id: number;
+	createdAt: string;
+	investmentType: InvestmentType;
+	courseStatus: CourseStatus;
+	feedbackRequestDate: string;
+	status: FeedbackStatus;
+	feedbackYear: number;
+	feedbackMonth: number;
+	feedbackWeek: number;
+	isBestFeedback: boolean;
+	updatedAt: string;
+	category: string;
+	positionHoldingTime: string;
+	screenshotImageUrls: string[];
+	riskTaking: number;
+	leverage: number;
+	positionStartDate: string;
+	positionEndDate: string;
+	position: Position;
+	positionStartReason: string;
+	positionEndReason: string;
+	trainerFeedbackRequestContent: string;
+	directionFrame: string;
+	mainFrame: string;
+	subFrame: string;
+	trendAnalysis: string;
+	pnl: number;
+	rnr: number;
+	entryPoint1: EntryPoint;
+	grade: Grade;
+	entryPoint2?: string;
+	entryPoint3?: string;
+	tradingReview: string;
+}
+
+/** 피드백 요청 상세 응답 */
+export interface FeedbackRequestDetailResponseDTO {
+	id: number;
+	investmentType: InvestmentType;
+	status: FeedbackStatus;
+	dayDetail?: DayFeedbackRequestDetailResponseDTO;
+	scalpingDetail?: ScalpingFeedbackRequestDetailResponseDTO;
+	swingDetail?: SwingFeedbackRequestDetailResponseDTO;
+	feedbackResponse?: FeedbackResponseDTO;
+}
