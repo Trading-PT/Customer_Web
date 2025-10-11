@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import MonthFeedback from "./MonthFeedback";
 import { tradingAPI } from "../lib/api";
 
@@ -16,9 +16,14 @@ interface MonthSummary {
 	finalPnL: string;
 }
 
-export default function Page({ searchParams }: any) {
-	const year = searchParams?.year || "2025";
-	const month = searchParams?.month || "8";
+export default function Page({
+	searchParams,
+}: {
+	searchParams: Promise<{ year?: string; month?: string }>;
+}) {
+	const params = use(searchParams);
+	const year = params.year || "2025";
+	const month = params.month || "8";
 
 	const [loading, setLoading] = useState(true);
 	const [weeks, setWeeks] = useState<WeekData[]>([]);

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import WeekFeedback from "./WeekFeedBack";
 import { tradingAPI } from "../lib/api";
 
@@ -18,10 +18,15 @@ interface WeekSummary {
 	weeklyPnL: string;
 }
 
-export default function Page({ searchParams }: { searchParams: any }) {
-	const year = searchParams?.year || "2025";
-	const month = searchParams?.month || "8";
-	const weekParam = searchParams?.week || "첫째 주";
+export default function Page({
+	searchParams,
+}: {
+	searchParams: Promise<{ year?: string; month?: string; week?: string }>;
+}) {
+	const params = use(searchParams);
+	const year = params.year || "2025";
+	const month = params.month || "8";
+	const weekParam = params.week || "첫째 주";
 
 	const [loading, setLoading] = useState(true);
 	const [days, setDays] = useState<DayData[]>([]);
