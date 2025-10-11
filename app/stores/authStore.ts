@@ -3,10 +3,23 @@ import { persist } from "zustand/middleware";
 import { authAPI } from "../lib/api/auth";
 
 interface User {
-	name?: string;
-	username?: string;
-	isSub?: boolean;
+	id?: number;
+	name: string;
+	username: string;
+	email: string;
+	phoneNumber?: string | null;
+	profileImage?: string | null;
+	investmentType: "SWING" | "DAY" | "SCALPING" | "FREE" | "";
+	isPremium: boolean;
+	isCourseCompleted: boolean;
+	exchangeName?: string | null;
+	paymentMethod?: string | null;
+	trainerId?: number | null;
+	trainerName?: string | null;
+	uid?: string | null;
+	userStatus?: string;
 }
+
 
 interface AuthState {
 	isAuthenticated: boolean;

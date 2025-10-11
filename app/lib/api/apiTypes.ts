@@ -50,6 +50,16 @@ export interface LoginRequest {
 	rememberMe?: boolean;
 }
 
+// 로그인 응답에 맞는 타입 지정
+export interface LoginResponse {
+	name: string;
+	username: string;
+	email: string;
+	investmentType: string;
+	isPremium: boolean;
+	isCourseCompleted: boolean;
+}
+
 /** 아이디 찾기 결과 */
 export interface FindIdResult {
 	userName: string;

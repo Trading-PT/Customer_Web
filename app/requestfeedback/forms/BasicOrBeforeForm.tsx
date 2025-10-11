@@ -1,25 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React from "react";
+import { useFormState } from "./hooks/useFormState";
+import FormHeader from "./components/FormHeader";
 import { User } from "@/app/types/user";
-import WeekSelector from "../WeekSelector";
 
 type Props = {
 	onSubmit: (data: any) => void;
-	currentUser: User;
+	currentUser: User & {
+		userLevel: "BASIC" | "PREMIUM";
+		completion: "BEFORE_COMPLETION" | "AFTER_COMPLETION";
+		investmentType: "SWING" | "DAY" | "SCALPING";
+	};
 	riskTaking?: number;
-};
-
-const investmentTypeMap: Record<string, string> = {
-	SWING: "스윙",
-	DAY: "데이",
-	SCALPING: "스켈핑",
-};
-
-const completionMap: Record<string, string> = {
-	BEFORE_COMPLETION: "완강 전",
-	AFTER_COMPLETION: "완강 후",
-	FREE: "무료",
 };
 
 export default function BasicOrBeforeForm({
@@ -27,79 +20,24 @@ export default function BasicOrBeforeForm({
 	currentUser,
 	riskTaking = 5,
 }: Props) {
-	const { investmentType, completion } = currentUser;
+	const {
+		form,
+		handleChange,
+		handleFileChange,
+		handleWeekChange,
+		screenshotPreview,
+		position,
+		setPosition,
+		isPositive,
+		setIsPositive,
+		pl,
+		setPl,
+		rr,
+		screenshot,
+	} = useFormState(riskTaking);
 
-	const investmentTypeLabel = investmentTypeMap[investmentType] || investmentType;
-	const completionLabel = completionMap[completion] || completion;
-
-	// 상태 
-	const [form, setForm] = useState({
-		feedbackRequestDate: new Date().toISOString().split("T")[0],
-		category: "",
-		positionHoldingTime: "",
-		operatingFundsRatio: "",
-		entryPrice: "",
-		exitPrice: "",
-		riskTaking: riskTaking.toString(),
-		settingStopLoss: "",
-		settingTakeProfit: "",
-		positionStartReason: "",
-		positionEndReason: "",
-		tradingReview: "",
-	});
-
-	const [screenshot, setScreenshot] = useState<File | null>(null);
-	const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
-	const [position, setPosition] = useState<"LONG" | "SHORT" | null>(null);
-	const [isPositive, setIsPositive] = useState(true);
-	const [pl, setPl] = useState<number>(0);
-	const [rr, setRr] = useState<number>(0);
-
-	// R&R 자동 계산
-	useEffect(() => {
-		if (pl !== 0) {
-			setRr(Number((riskTaking / Math.abs(pl)).toFixed(2)));
-		} else {
-			setRr(0);
-		}
-	}, [pl, riskTaking]);
-
-	// WeekSelector 변경 처리
-	const handleWeekChange = useCallback((data: { month: number; week: number }) => {
-		setForm((prev) => ({
-			...prev,
-			month: data.month,
-			week: data.week,
-		}));
-	}, []);
-
-
-	// input 공통 핸들러
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		const { name, value } = e.target;
-		setForm((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-
-	// 파일 업로드
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files && e.target.files[0]) {
-			const file = e.target.files[0];
-			setScreenshot(file);
-			setScreenshotPreview(URL.createObjectURL(file));
-		}
-	};
-
-	const handleUploadClick = () => {
-		document.getElementById("screenshotInput")?.click();
-	};
-
-	// Submit 시 부모에게 모든 데이터 전달
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
 		const formData = {
 			...form,
 			screenshot,
@@ -108,34 +46,18 @@ export default function BasicOrBeforeForm({
 			pl: isPositive ? pl : -pl,
 			rr,
 		};
-
 		onSubmit(formData);
 	};
 
-	// 게이지 표시 관련
-	const gaugeMin = -3;
-	const gaugeMax = 3;
-	const normalized = Math.min(Math.max(pl / riskTaking, gaugeMin), gaugeMax);
-	let arrowColor = "text-gray-500";
-	if (normalized <= -2) arrowColor = "text-red-500";
-	else if (normalized >= 2) arrowColor = "text-green-600";
-
 	return (
 		<form onSubmit={handleSubmit} className="flex flex-col gap-5 text-left">
-			{/* 상단 */}
-			<div className="flex items-center gap-3 mb-6">
-				<span
-					className={`px-3 py-1 text-white rounded
-          ${investmentType === "SWING" ? "bg-orange-400" : ""}
-          ${investmentType === "DAY" ? "bg-green-400" : ""}
-          ${investmentType === "SCALPING" ? "bg-sky-400" : ""}`}
-				>
-					{investmentTypeLabel}
-				</span>
-				<span className="px-3 py-1 border rounded">{completionLabel}</span>
-
-				{investmentType === "SWING" && <WeekSelector onChange={handleWeekChange} />}
-			</div>
+			{/* 상단 헤더 */}
+			<FormHeader
+				investmentType={currentUser.investmentType}
+				userLevel={currentUser.userLevel}
+				completion={currentUser.completion}
+				onWeekChange={handleWeekChange}
+			/>
 
 			{/* 날짜 */}
 			<div>
@@ -163,7 +85,7 @@ export default function BasicOrBeforeForm({
 				/>
 			</div>
 
-			{/* 홀딩 시간 */}
+			{/* 포지션 홀딩 시간 */}
 			<div>
 				<label className="block mb-1 font-medium">포지션 홀딩 시간</label>
 				<input
@@ -181,7 +103,7 @@ export default function BasicOrBeforeForm({
 				<label className="block mb-1 font-medium">스크린샷 업로드</label>
 				<div
 					className="w-full h-40 rounded bg-[#F4F4F4] flex items-center justify-center cursor-pointer overflow-hidden"
-					onClick={handleUploadClick}
+					onClick={() => document.getElementById("screenshotInput")?.click()}
 				>
 					{screenshotPreview ? (
 						<img
@@ -202,12 +124,14 @@ export default function BasicOrBeforeForm({
 				/>
 			</div>
 
-			{/* 포지션 */}
+			{/* 포지션 선택 */}
 			<div className="flex gap-3">
 				<button
 					type="button"
 					onClick={() => setPosition("LONG")}
-					className={`px-4 py-2 cursor-pointer rounded ${position === "LONG" ? "bg-green-500 text-white" : "bg-[#F4F4F4] text-black"
+					className={`px-4 py-2 cursor-pointer rounded ${position === "LONG"
+						? "bg-green-500 text-white"
+						: "bg-[#F4F4F4] text-black"
 						}`}
 				>
 					Long
@@ -215,7 +139,9 @@ export default function BasicOrBeforeForm({
 				<button
 					type="button"
 					onClick={() => setPosition("SHORT")}
-					className={`px-4 py-2 cursor-pointer rounded ${position === "SHORT" ? "bg-red-400 text-white" : "bg-[#F4F4F4] text-black"
+					className={`px-4 py-2 cursor-pointer rounded ${position === "SHORT"
+						? "bg-red-400 text-white"
+						: "bg-[#F4F4F4] text-black"
 						}`}
 				>
 					Short
@@ -270,7 +196,7 @@ export default function BasicOrBeforeForm({
 				/>
 			</div>
 
-			{/* 손절/익절 */}
+			{/* 손절 / 익절 */}
 			<div className="flex gap-4">
 				<div className="flex-1">
 					<label className="block mb-1 font-medium">설정 손절가</label>
@@ -335,7 +261,7 @@ export default function BasicOrBeforeForm({
 				</div>
 			</div>
 
-			{/* 복기 */}
+			{/* 복기 영역 */}
 			<div>
 				<label className="block mb-1 font-medium">포지션 진입 근거</label>
 				<textarea
@@ -345,6 +271,7 @@ export default function BasicOrBeforeForm({
 					className="bg-[#F4F4F4] rounded p-2 w-full h-24"
 				/>
 			</div>
+
 			<div>
 				<label className="block mb-1 font-medium">포지션 탈출 근거</label>
 				<textarea
@@ -354,6 +281,7 @@ export default function BasicOrBeforeForm({
 					className="bg-[#F4F4F4] rounded p-2 w-full h-24"
 				/>
 			</div>
+
 			<div>
 				<label className="block mb-1 font-medium">최종 복기</label>
 				<textarea
@@ -364,6 +292,7 @@ export default function BasicOrBeforeForm({
 				/>
 			</div>
 
+			{/* 제출 버튼 */}
 			<button
 				type="submit"
 				className="bg-gradient-to-r from-[#D2C693] to-[#928346] text-white py-3 rounded mb-20 cursor-pointer"

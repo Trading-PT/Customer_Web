@@ -10,6 +10,11 @@ import EntryTable from "../EntryTable";
 type Props = {
 	onSubmit: (data: any) => void;
 	currentUser: User;
+	// currentUser: User & {
+	// 	userLevel: "BASIC" | "PREMIUM";
+	// 	completion: "BEFORE_COMPLETION" | "AFTER_COMPLETION";
+	// 	investmentType: "SWING" | "DAY" | "SCALPING";
+	// };
 	riskTaking?: number;
 };
 

@@ -22,7 +22,7 @@ export type CompletionStatus =
 
 // 사용자
 export type User = {
-  id: number;
+  // id: number;
   name: string;
   phone: string;
   email: string;

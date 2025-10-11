@@ -3,6 +3,7 @@ import {
 	ApiResponse,
 	SignupRequest,
 	LoginRequest,
+	LoginResponse,
 	FindIdResult,
 	FindIdResponse
 } from "./apiTypes";
@@ -15,7 +16,7 @@ export const authAPI = {
 		});
 	},
 
-	login(loginData: LoginRequest): Promise<ApiResponse> {
+	login(loginData: LoginRequest): Promise<ApiResponse<LoginResponse>> {
 		return fetcher("/api/v1/auth/login", {
 			method: "POST",
 			body: JSON.stringify(loginData),
