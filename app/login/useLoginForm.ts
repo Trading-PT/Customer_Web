@@ -7,7 +7,6 @@ import { useAuthStore } from "../stores/authStore";
 export const useLoginForm = () => {
 	const router = useRouter();
 	const { login, isLoading } = useAuth();
-	const setAuthLogin = useAuthStore((state) => state.login);
 
 	const [userId, setUserId] = useState("");
 	const [password, setPassword] = useState("");
@@ -29,7 +28,8 @@ export const useLoginForm = () => {
 		});
 
 		if (result.success) {
-			setAuthLogin({ username: userId });
+			// 로그인 성공 후 사용자 정보 가져오기
+			await useAuthStore.getState().checkAuth();
 			router.push("/");
 		} else {
 			setError(result.error || "로그인에 실패했습니다.");
