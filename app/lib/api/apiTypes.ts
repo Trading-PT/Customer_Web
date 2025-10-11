@@ -170,3 +170,120 @@ export interface ScalpingFeedbackRequest {
 	category: string;
 	totalPositionTakingCount: number;
 }
+
+
+/* ------------------ 월간/주간 매매일지 관련 ------------------ */
+
+/** 피드백 상태 */
+export type FeedbackStatus = "FR" | "FN" | "N"; // FR: 답변 읽음, FN: 답변 안 읽음, N: 답변 없음
+
+/** 투자 타입 */
+export type InvestmentType = "SWING" | "DAY" | "SCALPING";
+
+/** 코스 상태 */
+export type CourseStatus = "BEFORE_COMPLETION" | "PENDING_COMPLETION" | "AFTER_COMPLETION";
+
+/** 월별 피드백 요약 */
+export interface MonthlyFeedbackSummary {
+	month: number;
+	totalCount: number;
+	status: FeedbackStatus;
+}
+
+/** 연도별 월 목록 응답 */
+export interface YearlySummaryResponse {
+	feedbackYear: number;
+	months: MonthlyFeedbackSummary[];
+}
+
+/** 주차별 통계 */
+export interface MonthlyWeekFeedbackSummary {
+	week: number;
+	tradingCount: number;
+	weeklyPnl: number;
+	status: FeedbackStatus;
+}
+
+/** 월별 피드백 통계 */
+export interface MonthlyFeedbackSummaryResponse {
+	monthlyWeekFeedbackSummaryResponseDTOS: MonthlyWeekFeedbackSummary[];
+	winningRate: number;
+	monthlyAverageRnr: number;
+	monthlyPnl: number;
+}
+
+/** 월간 스냅샷 */
+export interface MonthSnapshot {
+	month: number;
+	finalWinRate: number;
+	averageRnr: number;
+	finalPnL: number;
+}
+
+/** 월간 성과 비교 */
+export interface PerformanceComparisonMonthSnapshot {
+	before: MonthSnapshot;
+	current: MonthSnapshot;
+}
+
+/** 월간 매매일지 기본 응답 */
+export interface MonthlySummaryResponse {
+	courseStatus: CourseStatus;
+	investmentType: InvestmentType;
+	year: number;
+	month: number;
+}
+
+/** 완강 전 월간 매매일지 */
+export interface BeforeCompletedCourseMonthlySummary extends MonthlySummaryResponse {
+	monthlyFeedbackSummaryResponseDTO: MonthlyFeedbackSummaryResponse;
+	performanceComparison: PerformanceComparisonMonthSnapshot;
+}
+
+/** 일별 통계 */
+export interface WeeklyWeekFeedbackSummary {
+	date: string;
+	tradingCount: number;
+	winCount: number;
+	lossCount: number;
+	dailyPnl: number;
+	status: FeedbackStatus;
+}
+
+/** 주별 피드백 통계 */
+export interface WeeklyFeedbackSummaryResponse {
+	weeklyWeekFeedbackSummaryResponseDTOS: WeeklyWeekFeedbackSummary[];
+	winningRate: number;
+	weeklyAverageRnr: number;
+	weeklyPnl: number;
+}
+
+/** 주간 스냅샷 */
+export interface WeekSnapshot {
+	week: number;
+	winRate: number;
+	rnr: number;
+	pnl: number;
+}
+
+/** 주간 성과 비교 */
+export interface PerformanceComparisonWeekSnapshot {
+	before: WeekSnapshot;
+	current: WeekSnapshot;
+}
+
+/** 주간 매매일지 기본 응답 */
+export interface WeeklySummaryResponse {
+	courseStatus: CourseStatus;
+	investmentType: InvestmentType;
+	year: number;
+	month: number;
+	week: number;
+}
+
+/** 완강 전 주간 매매일지 */
+export interface BeforeCompletedCourseWeeklySummary extends WeeklySummaryResponse {
+	weeklyFeedbackSummaryResponseDTO: WeeklyFeedbackSummaryResponse;
+	performanceComparison: PerformanceComparisonWeekSnapshot;
+	memo?: string;
+}

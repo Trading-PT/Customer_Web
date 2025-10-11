@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import CustomButton from "../components/CustomButton";
 import { useRouter } from "next/navigation";
 
@@ -25,6 +25,7 @@ interface WeekFeedbackProps {
 	week: string; // ex) "셋째 주"
 	days: DayData[];
 	summary: WeekSummary;
+	initialMemo?: string;
 }
 
 export default function WeekFeedback({
@@ -33,8 +34,10 @@ export default function WeekFeedback({
 	week,
 	days,
 	summary,
+	initialMemo = "",
 }: WeekFeedbackProps) {
 	const router = useRouter();
+	const [memo, setMemo] = useState(initialMemo);
 
 	const handleDayClick = (day: string) => {
 		router.push(`/dayfeedback?year=${year}&month=${month}&week=${week}&day=${day}`);
@@ -206,6 +209,8 @@ export default function WeekFeedback({
 					이번 주 나의 매매 중 가장 큰 문제점 한 가지 메모하기
 				</h2>
 				<textarea
+					value={memo}
+					onChange={(e) => setMemo(e.target.value)}
 					placeholder="나의 매매를 복기하고 메모해주세요."
 					className="w-full h-32 sm:h-40 p-3 sm:p-4 border border-gray-300 rounded-md resize-none text-sm sm:text-base"
 				/>

@@ -23,6 +23,7 @@ interface MonthFeedbackProps {
 	nowMonth: string;
 	weeks: WeekData[];
 	summary: MonthSummary;
+	beforeSummary?: MonthSummary;
 }
 
 export default function MonthFeedback({
@@ -32,6 +33,7 @@ export default function MonthFeedback({
 	nowMonth,
 	weeks,
 	summary,
+	beforeSummary,
 }: MonthFeedbackProps) {
 	const router = useRouter();
 
@@ -137,15 +139,15 @@ export default function MonthFeedback({
 						<div className="border-t-2 border-yellow-900 pt-3 sm:pt-4">
 							<div className="flex justify-between py-2 text-gray-700 text-sm sm:text-base">
 								<span>월간 최종 승률</span>
-								<span>{summary.winRate}</span>
+								<span>{beforeSummary?.winRate || summary.winRate}</span>
 							</div>
 							<div className="flex justify-between py-2 text-gray-700 text-sm sm:text-base">
 								<span>월간 평균 손익비</span>
-								<span>{summary.avgProfit}</span>
+								<span>{beforeSummary?.avgProfit || summary.avgProfit}</span>
 							</div>
 							<div className="flex justify-between py-2 text-gray-700 text-sm sm:text-base">
 								<span>월간 최종 p&l</span>
-								<span>{summary.finalPnL}</span>
+								<span>{beforeSummary?.finalPnL || summary.finalPnL}</span>
 							</div>
 						</div>
 					</div>
