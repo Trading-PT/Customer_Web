@@ -55,7 +55,7 @@ export default function MyPageSidebar({ userData }: Props) {
 		if (userData?.profileImage) {
 			setProfileImage(userData.profileImage);
 		} else {
-			setProfileImage("/images/defaultProfile.svg"); // 기본 이미지
+			setProfileImage("/images/defaultImg.png"); // 기본 이미지
 		}
 	}, [userData?.profileImage]);
 
