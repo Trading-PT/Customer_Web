@@ -112,4 +112,15 @@ export const authAPI = {
 			}),
 		});
 	},
+
+	/** 프로필 이미지 변경 */
+	updateProfileImage(file: File): Promise<ApiResponse> {
+		const formData = new FormData();
+		formData.append("file", file);
+
+		return fetcher("/api/v1/user/profile-image", {
+			method: "POST",
+			body: formData,
+		});
+	},
 };

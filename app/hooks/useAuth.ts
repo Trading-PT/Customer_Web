@@ -73,6 +73,7 @@ export interface AuthContextType {
 
   writeComplaint: (title: string, content: string) => Promise<ApiResponse>;
   readComplaint: () => Promise<ApiResponse>;
+  updateProfileImage: (file: File) => Promise<ApiResponse>;
 }
 
 // -------------------- useAuth 구현 --------------------
@@ -81,7 +82,7 @@ export const useAuth = (): AuthContextType => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ 로그인 상태 확인
+  // 로그인 상태 확인
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("auth_user");
@@ -99,7 +100,7 @@ export const useAuth = (): AuthContextType => {
     }
   }, []);
 
-  // ✅ 로그인
+  // 로그인
   const login = async (userData: LoginData) => {
     setIsLoading(true);
     try {
@@ -115,7 +116,7 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  // ✅ 회원가입
+  // 회원가입
   const signup = async (userData: SignupData) => {
     setIsLoading(true);
     try {
@@ -127,7 +128,7 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  // ✅ 로그아웃
+  // 로그아웃
   const logout = async () => {
     setIsLoading(true);
     try {
@@ -143,7 +144,7 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  // ✅ 비로그인 상태 비밀번호 재설정
+  // 비로그인 상태 비밀번호 재설정
   const resetPasswordUnauthenticated = async (
     email: string,
     code: string,
@@ -161,7 +162,7 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  // ✅ 로그인 상태 비밀번호 재설정
+  // 로그인 상태 비밀번호 재설정
   const resetPasswordAuthenticated = async (
     currentPassword: string,
     newPassword: string
@@ -177,7 +178,7 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  // ✅ 회원 탈퇴
+  // 회원 탈퇴
   const deleteUser = async () => {
     setIsLoading(true);
     try {
@@ -193,7 +194,7 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  // ✅ 내 정보 조회
+  // 내 정보 조회
   const myInfo = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -208,7 +209,7 @@ export const useAuth = (): AuthContextType => {
     }
   }, []);
 
-  // ✅ 피드백 요청 (feedbackAPI)
+  // 피드백 요청 (feedbackAPI)
   const requestSwingFeedback = async (data: any) => {
     setIsLoading(true);
     try {
@@ -245,7 +246,7 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
-  // ✅ 민원 작성/조회 (complaintAPI)
+  // 민원 작성/조회 (complaintAPI)
   const writeComplaint = async (title: string, content: string) => {
     setIsLoading(true);
     try {
@@ -270,6 +271,24 @@ export const useAuth = (): AuthContextType => {
     }
   };
 
+  const updateProfileImage = async (file: File) => {
+    setIsLoading(true);
+    try {
+      const res = await authAPI.updateProfileImage(file);
+      if (res.success) {
+        console.log("프로필 이미지 변경 성공:", res);
+      } else {
+        console.warn("프로필 이미지 변경 실패:", res.error);
+      }
+      return res;
+    } catch (error) {
+      console.error("프로필 이미지 변경 중 오류:", error);
+      return { success: false, error: "프로필 이미지 변경 중 오류 발생" };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // -------------------- 반환 --------------------
   return {
     user,
@@ -287,5 +306,6 @@ export const useAuth = (): AuthContextType => {
     requestScalpingFeedback,
     writeComplaint,
     readComplaint,
+    updateProfileImage,
   };
 };
