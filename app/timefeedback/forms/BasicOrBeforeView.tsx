@@ -21,7 +21,7 @@ export default function BasicOrBeforeView({ response }: BasicOrBeforeViewProps) 
 	};
 
 	return (
-		<div className="flex flex-col gap-5 text-left p-5 mt-8 border-t-2 border-blue-200">
+		<div className="flex flex-col gap-5 text-left p-5 mt-8 border-t-2 border-blue-200 w-full max-w-lg">
 			{/* 피드백 답변 헤더 */}
 			<div className="flex items-center gap-3 mb-6">
 				<span className="px-3 py-1 text-white rounded bg-blue-500">트레이너 피드백</span>

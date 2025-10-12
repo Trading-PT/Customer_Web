@@ -7,6 +7,7 @@ interface DayData {
 	time: string;
 	title: string;
 	new: boolean;
+	feedbackId: number;
 }
 
 interface DayFeedbackProps {
@@ -41,7 +42,7 @@ export default function DayFeedback({
 						<button className="w-28 px-4 py-2 bg-gray-800 text-white rounded-md text-sm cursor-pointer text-center"
 							onClick={() =>
 								router.push(
-									`/timefeedback?year=${year}&month=${month}&week=${week}&day=${day}&time=${entry.time}`
+									`/timefeedback?year=${year}&month=${month}&week=${week}&day=${day}&time=${entry.time}&id=${entry.feedbackId}`
 								)
 							}>
 							{entry.time}
@@ -51,7 +52,7 @@ export default function DayFeedback({
 						<button className="flex-1 flex items-center justify-between text-gray-800 border-b border-gray-300 py-2 cursor-pointer"
 							onClick={() =>
 								router.push(
-									`/timefeedback?year=${year}&month=${month}&week=${week}&day=${day}&time=${entry.time}`
+									`/timefeedback?year=${year}&month=${month}&week=${week}&day=${day}&time=${entry.time}&id=${entry.feedbackId}`
 								)
 							}>
 							<span>{entry.title}</span>

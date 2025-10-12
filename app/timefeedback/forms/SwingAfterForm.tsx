@@ -43,7 +43,7 @@ export default function SwingAfterView({ detail }: SwingAfterViewProps) {
 		}
 	};
 	return (
-		<div className="flex flex-col gap-5 text-left p-5">
+		<div className="flex flex-col gap-5 text-left p-5 w-full max-w-lg">
 			{/* 상단 */}
 			<div className="flex items-center gap-3 mb-6">
 				<span className="px-3 py-1 text-white rounded bg-orange-400">스윙</span>
