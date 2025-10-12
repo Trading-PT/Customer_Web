@@ -51,6 +51,11 @@ export default function Login() {
 							isLoading={isLoading}
 							onSubmit={handleLogin}
 						/>
+						{showErrorModal && (
+							<div className="text-red-600 text-sm text-center bg-red-50 p-3 rounded w-full">
+								아이디 또는 비밀번호가 일치하지 않습니다.
+							</div>
+						)}
 
 						<div className="text-center text-sm sm:text-base">
 							<span className="text-gray-600">첫 방문이신가요? </span>
@@ -86,11 +91,11 @@ export default function Login() {
 			</main>
 
 			{/* 모달 */}
-			<ErrorModal
+			{/* <ErrorModal
 				isOpen={showErrorModal}
 				message={"아이디 또는 비밀번호가 일치하지 않습니다."}
 				onClose={() => setShowErrorModal(false)}
-			/>
+			/> */}
 			<FindIdModal isOpen={findIdModalOpen} onClose={() => setFindIdModalOpen(false)} />
 			<ResetPasswordModal
 				isOpen={resetPasswordModalOpen}
