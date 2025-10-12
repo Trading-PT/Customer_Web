@@ -1,5 +1,4 @@
-// components/SocialLoginButtons.tsx
-import CustomButton from "../components/CustomButton";
+"use client";
 
 interface Props {
 	onKakao: () => void;
@@ -9,23 +8,27 @@ interface Props {
 
 export default function SocialLoginButtons({ onKakao, onNaver, disabled }: Props) {
 	return (
-		<div className="flex flex-col gap-2 w-full">
-			<CustomButton
-				className="bg-yellow-300 text-black px-2 py-2 rounded-lg"
+		<div className="flex gap-1 w-full">
+
+			<button
 				onClick={onKakao}
 				disabled={disabled}
-			>
-				카카오 로그인
-			</CustomButton>
-			<CustomButton
-				variant="normalFull"
-				bgColor="bg-green-500"
-				textColor="text-white"
+				className={`
+		  flex-1 h-10 md:h-11 rounded-lg 
+          bg-[url('/images/login_kakao.svg')] bg-contain bg-no-repeat bg-center
+		  cursor-pointer
+        `}
+			/>
+
+			<button
 				onClick={onNaver}
 				disabled={disabled}
-			>
-				네이버 로그인
-			</CustomButton>
+				className={`
+          flex-1 h-10 md:h-11 rounded-lg 
+          bg-[url('/images/login_naver.svg')] bg-contain bg-no-repeat bg-center
+          cursor-pointer
+        `}
+			/>
 		</div>
 	);
 }
