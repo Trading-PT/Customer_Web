@@ -101,7 +101,8 @@ export default function MyPage() {
 			<MyPageMain state={state} />
 
 			{/* 로그인한 계정의 실제 status에 따른 컴포넌트입니다 */}
-			{/* {userData && <MyPageMain state={userData.userStatus} userData={userData} />} */}
+			{/* {userData && <MyPageMain state={userData.userStatus} />} */}
+			{/* {userData && <MyPageMain state={userData.userStatus} userData={userData} />} <-- 나중에 */}
 		</div>
 	);
 }

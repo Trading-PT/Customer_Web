@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import FeedbackHeader from "./FeedbackHeader";
 import BasicOrBeforeForm from "./forms/BasicOrBeforeForm";
 import SwingAfterForm from "./forms/SwingAfterForm";
@@ -13,6 +14,7 @@ import {
 	mapScalpingFormData,
 	mapFreeFormData,
 } from "../utils/feedbackFormMapper";
+import SaveSuccess from "./SaveSuccess";
 
 export default function RequestFeedback() {
 	// Zustand에서 현재 로그인 유저 정보 가져오기
@@ -33,6 +35,9 @@ export default function RequestFeedback() {
 	console.log("투자 유형:", investmentType);
 	console.log("회원 등급:", userLevel);
 	console.log("완강 상태:", completion);
+
+
+	const [open, setOpen] = useState(false);
 
 	const handleSubmit = async (formData: any) => {
 		console.log("서버로 전송할 데이터:", formData);
@@ -74,6 +79,7 @@ export default function RequestFeedback() {
 			}
 
 			console.log("서버 응답:", res);
+			setOpen(true); // 저장 완료 시 모달 열기
 		} catch (error) {
 			console.error("피드백 요청 예외 발생:", error);
 			alert("네트워크 오류가 발생했습니다.");
@@ -102,6 +108,8 @@ export default function RequestFeedback() {
 
 			{/* 조건부 렌더링된 폼 */}
 			<div className="w-full max-w-lg p-6">{renderForm()}</div>
+
+			<SaveSuccess isOpen={open} onClose={() => setOpen(false)} />
 		</div>
 	);
 }
