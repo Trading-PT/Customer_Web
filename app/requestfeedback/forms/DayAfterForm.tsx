@@ -8,12 +8,12 @@ import EntryTable from "../EntryTable";
 
 type Props = {
 	onSubmit: (data: any) => void;
-	// currentUser: User;
-	currentUser: User & {
-		userLevel: "BASIC" | "PREMIUM";
-		completion: "BEFORE_COMPLETION" | "AFTER_COMPLETION";
-		investmentType: "SWING" | "DAY" | "SCALPING";
-	};
+	currentUser: User;
+	// currentUser: User & {
+	// 	userLevel: "BASIC" | "PREMIUM";
+	// 	completion: "BEFORE_COMPLETION" | "AFTER_COMPLETION";
+	// 	investmentType: "SWING" | "DAY" | "SCALPING";
+	// };
 	riskTaking?: number;
 };
 
@@ -135,7 +135,7 @@ export default function DayAfterForm({ onSubmit, currentUser, riskTaking = 5 }: 
 				<span
 					className={`px-3 py-1 text-white rounded
           ${investmentType === "SWING" ? "bg-orange-400" : ""}
-          ${investmentType === "DAY" ? "bg-green-600" : ""}
+          ${investmentType === "DAY" ? "bg-[#2AC287]" : ""}
           ${investmentType === "SCALPING" ? "bg-sky-400" : ""}`}
 				>
 					{investmentTypeLabel}
@@ -303,7 +303,7 @@ export default function DayAfterForm({ onSubmit, currentUser, riskTaking = 5 }: 
 				<button
 					type="button"
 					onClick={() => setPosition("LONG")}
-					className={`px-4 py-2 cursor-pointer rounded ${position === "LONG" ? "bg-green-500 text-white" : "bg-[#F4F4F4] text-black"
+					className={`px-4 py-2 cursor-pointer rounded ${position === "LONG" ? "bg-[#2AC287] text-white" : "bg-[#F4F4F4] text-black"
 						}`}
 				>
 					Long
@@ -311,7 +311,7 @@ export default function DayAfterForm({ onSubmit, currentUser, riskTaking = 5 }: 
 				<button
 					type="button"
 					onClick={() => setPosition("SHORT")}
-					className={`px-4 py-2 cursor-pointer rounded ${position === "SHORT" ? "bg-red-400 text-white" : "bg-[#F4F4F4] text-black"
+					className={`px-4 py-2 cursor-pointer rounded ${position === "SHORT" ? "bg-[#F74C5F] text-white" : "bg-[#F4F4F4] text-black"
 						}`}
 				>
 					Short
@@ -324,7 +324,7 @@ export default function DayAfterForm({ onSubmit, currentUser, riskTaking = 5 }: 
 				<div className="flex gap-2">
 					<button
 						type="button"
-						className={`px-3 py-1 border rounded ${isPositive ? "bg-green-500 text-white" : "bg-white text-green-500 border-green-500"
+						className={`px-3 py-1 border rounded ${isPositive ? "bg-[#2AC287] text-white" : "bg-white text-[#2AC287] border-[#2AC287]"
 							}`}
 						onClick={() => setIsPositive(true)}
 					>
@@ -332,7 +332,7 @@ export default function DayAfterForm({ onSubmit, currentUser, riskTaking = 5 }: 
 					</button>
 					<button
 						type="button"
-						className={`px-3 py-1 border rounded ${!isPositive ? "bg-red-500 text-white" : "bg-white text-red-500 border-red-500"
+						className={`px-3 py-1 border rounded ${!isPositive ? "bg-[#F74C5F] text-white" : "bg-white text-[#F74C5F] border-[#F74C5F]"
 							}`}
 						onClick={() => setIsPositive(false)}
 					>

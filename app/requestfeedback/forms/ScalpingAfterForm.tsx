@@ -90,7 +90,7 @@ export default function ScalpingAfterForm({ onSubmit, currentUser, riskTaking = 
 				<span
 					className={`px-3 py-1 text-white rounded
             ${investmentType === "SWING" ? "bg-orange-400" : ""}
-            ${investmentType === "DAY" ? "bg-green-400" : ""}
+            ${investmentType === "DAY" ? "bg-[#2AC287]" : ""}
             ${investmentType === "SCALPING" ? "bg-sky-400" : ""}`}
 				>
 					{investmentType}

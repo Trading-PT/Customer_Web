@@ -130,7 +130,7 @@ export default function BasicOrBeforeForm({
 					type="button"
 					onClick={() => setPosition("LONG")}
 					className={`px-4 py-2 cursor-pointer rounded ${position === "LONG"
-						? "bg-green-500 text-white"
+						? "bg-[#2AC287] text-white"
 						: "bg-[#F4F4F4] text-black"
 						}`}
 				>
@@ -140,7 +140,7 @@ export default function BasicOrBeforeForm({
 					type="button"
 					onClick={() => setPosition("SHORT")}
 					className={`px-4 py-2 cursor-pointer rounded ${position === "SHORT"
-						? "bg-red-400 text-white"
+						? "bg-[#F74C5F] text-white"
 						: "bg-[#F4F4F4] text-black"
 						}`}
 				>
@@ -240,8 +240,8 @@ export default function BasicOrBeforeForm({
 						<button
 							type="button"
 							className={`px-3 py-1 border rounded ${isPositive
-								? "bg-green-500 text-white"
-								: "bg-white text-green-500 border-green-500"
+								? "bg-[#2AC287] text-white"
+								: "bg-white text-[#2AC287] border-[#2AC287]"
 								}`}
 							onClick={() => setIsPositive(true)}
 						>
@@ -250,8 +250,8 @@ export default function BasicOrBeforeForm({
 						<button
 							type="button"
 							className={`px-3 py-1 border rounded ${!isPositive
-								? "bg-red-500 text-white"
-								: "bg-white text-red-500 border-red-500"
+								? "bg-[#F74C5F] text-white"
+								: "bg-white text-[#F74C5F] border-[#F74C5F]"
 								}`}
 							onClick={() => setIsPositive(false)}
 						>
