@@ -18,6 +18,7 @@ import TrainerAssigned from "./status/TrainerAssigned";
 
 import { UserStatus } from "../mocks/status";
 import { RENDER_RULES } from "./constants/userStatusRules";
+import BasicFeedbackButton from "./BasicFeedbackButton";
 
 type Props = {
 	state: UserStatus;
@@ -89,6 +90,9 @@ export default function MyPageMain({ state }: Props) {
 					</div>
 					<BottomNotion />
 				</StatusWrapper>
+
+				{state == "UID_APPROVED" && (<BasicFeedbackButton />)}
+				{/* <BasicFeedbackButton /> */}
 			</div>
 		</main>
 	);
