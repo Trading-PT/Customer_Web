@@ -34,7 +34,8 @@ export default function MyPage() {
 		username: string, // 닉네임 
 		email: string;
 		phone?: string;
-		profileImage?: string | null; // 나중에 기본 이미지 처리하기 
+		myProfileImage?: string | null;
+		trainerProfileImage?: string | null;
 
 		investmentType: string, // 투자 유형 
 		userStatus: UserStatus, // 사용자 상태
@@ -61,7 +62,8 @@ export default function MyPage() {
 					username: res.data.username,
 					email: res.data.email,
 					phone: res.data.phoneNumber,
-					profileImage: res.data.profileImage ?? null,
+					myProfileImage: res.data.myProfileImage ?? null,
+					trainerProfileImage: res.data.trainerProfileImage ?? null,
 
 					investmentType: res.data.investmentType,
 					userStatus: res.data.userStatus as UserStatus,
@@ -99,7 +101,7 @@ export default function MyPage() {
 			<MyPageMain state={state} />
 
 			{/* 로그인한 계정의 실제 status에 따른 컴포넌트입니다 */}
-			{/* {userData && <MyPageMain state={userData.userStatus} />} */}
+			{/* {userData && <MyPageMain state={userData.userStatus} userData={userData} />} */}
 		</div>
 	);
 }

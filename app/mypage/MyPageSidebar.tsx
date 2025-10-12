@@ -18,7 +18,9 @@ type UserData = {
 	username: string;
 	email: string;
 	phone?: string;
-	profileImage?: string | null;
+	// profileImage?: string | null;
+	myProfileImage?: string | null;
+	trainerProfileImage?: string | null;
 	investmentType: string;
 	userStatus: UserStatus;
 	exchangeName: string;
@@ -38,7 +40,7 @@ export default function MyPageSidebar({ userData }: Props) {
 	const { deleteUser } = useAuth();
 
 	// 프로필 이미지 훅
-	const { profileImage, handleProfileImageChange, uploading } = useProfileImage(userData?.profileImage);
+	const { profileImage, handleProfileImageChange, uploading } = useProfileImage(userData?.myProfileImage);
 
 	// 모달 상태 관리
 	const [openModal, setOpenModal] = useState<null | "uid" | "type">(null);
