@@ -6,6 +6,8 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import CustomModal from "../components/CustomModal";
 import CustomDivider from "../components/CustomDivider";
+import { consultationAPI } from "../lib/api";
+import type { SlotAvailabilityDTO } from "../lib/api/apiTypes";
 
 type TimeSlot = {
 	time: string;
@@ -23,6 +25,7 @@ export default function Reservation({ onClose }: ReservationProps) {
 	const [selectedTime, setSelectedTime] = useState<string | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+	const [isLoadingSlots, setIsLoadingSlots] = useState(false);
 
 	const closeModal = () => {
 		setIsModalOpen(false);
@@ -33,26 +36,76 @@ export default function Reservation({ onClose }: ReservationProps) {
 		router.push("/");
 	};
 
-	// mockData (추후 API 대체 예정)
-	const mockTimes: TimeSlot[] = [
-		{ time: "09:00", available: true },
-		{ time: "10:00", available: true },
-		{ time: "11:00", available: true },
-		{ time: "13:00", available: true },
-		{ time: "14:00", available: false }, // 예약 불가
-		{ time: "15:00", available: true },
-		{ time: "16:00", available: true },
-		{ time: "17:00", available: true },
-		{ time: "18:00", available: true },
-	];
+	// 시간 슬롯을 시간 문자열로 변환하는 함수
+	const convertSlotToTime = (slot: string): string => {
+		const hour = slot.replace("H", "");
+		return `${hour}:00`;
+	};
 
+	// 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
+	const formatDateForAPI = (date: Date): string => {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	};
+
+	// 날짜 선택 시 해당 날짜의 상담 가능 시간대 조회
 	useEffect(() => {
-		setTimeSlots(mockTimes);
-	}, []);
+		if (!selectedDate) return;
 
-	const handleReserve = () => {
-		if (selectedDate && selectedTime) {
-			setIsModalOpen(true);
+		const fetchAvailableSlots = async () => {
+			setIsLoadingSlots(true);
+			try {
+				const dateStr = formatDateForAPI(selectedDate);
+				const response = await consultationAPI.getAvailableSlots(dateStr);
+
+				if (response.success && response.data) {
+					// API 응답을 TimeSlot 타입으로 변환
+					const slots: TimeSlot[] = response.data.map((slot: SlotAvailabilityDTO) => ({
+						time: convertSlotToTime(slot.timeSlot),
+						available: slot.available,
+					}));
+					setTimeSlots(slots);
+				} else {
+					console.error("상담 가능 시간대 조회 실패:", response.message);
+					// 실패 시 빈 배열로 설정
+					setTimeSlots([]);
+				}
+			} catch (error) {
+				console.error("상담 가능 시간대 조회 중 오류:", error);
+				setTimeSlots([]);
+			} finally {
+				setIsLoadingSlots(false);
+			}
+		};
+
+		fetchAvailableSlots();
+	}, [selectedDate]);
+
+	const handleReserve = async () => {
+		if (!selectedDate || !selectedTime) return;
+
+		try {
+			const dateStr = formatDateForAPI(selectedDate);
+			// 시간을 HH:MM:SS 형식으로 변환
+			const timeStr = `${selectedTime}:00`;
+
+			const response = await consultationAPI.createConsultation({
+				date: dateStr,
+				time: timeStr,
+			});
+
+			if (response.success) {
+				console.log("상담 예약 성공:", response.data);
+				setIsModalOpen(true);
+			} else {
+				console.error("상담 예약 실패:", response.message);
+				alert(`상담 예약에 실패했습니다: ${response.message}`);
+			}
+		} catch (error) {
+			console.error("상담 예약 중 오류:", error);
+			alert("상담 예약 중 오류가 발생했습니다. 다시 시도해주세요.");
 		}
 	};
 
@@ -123,22 +176,32 @@ export default function Reservation({ onClose }: ReservationProps) {
 				</p>
 
 				<div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-					{timeSlots.map(({ time, available }) => (
-						<button
-							key={time}
-							disabled={!available}
-							onClick={() => setSelectedTime(time)}
-							className={`rounded-md border px-4 py-2 text-sm font-medium transition-all
+					{isLoadingSlots ? (
+						<div className="col-span-2 sm:col-span-3 text-center py-8 text-gray-500">
+							상담 가능 시간대를 불러오는 중...
+						</div>
+					) : timeSlots.length === 0 ? (
+						<div className="col-span-2 sm:col-span-3 text-center py-8 text-gray-500">
+							날짜를 선택하면 상담 가능 시간대가 표시됩니다.
+						</div>
+					) : (
+						timeSlots.map(({ time, available }) => (
+							<button
+								key={time}
+								disabled={!available}
+								onClick={() => setSelectedTime(time)}
+								className={`rounded-md border px-4 py-2 text-sm font-medium transition-all
                 ${!available
-									? "text-gray-400 bg-gray-300 cursor-not-allowed"
-									: selectedTime === time
-										? "bg-indigo-100 border-indigo-400 text-indigo-600 cursor-pointer"
-										: "border-gray-300 text-gray-800 hover:bg-gray-100"
-								}`}
-						>
-							{time < "12:00" ? `오전 ${time}` : `오후 ${time}`}
-						</button>
-					))}
+										? "text-gray-400 bg-gray-300 cursor-not-allowed"
+										: selectedTime === time
+											? "bg-indigo-100 border-indigo-400 text-indigo-600 cursor-pointer"
+											: "border-gray-300 text-gray-800 hover:bg-gray-100"
+									}`}
+							>
+								{time < "12:00" ? `오전 ${time}` : `오후 ${time}`}
+							</button>
+						))
+					)}
 				</div>
 			</div>
 

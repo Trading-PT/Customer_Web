@@ -479,3 +479,35 @@ export interface FeedbackRequestListItemResponseDTO {
 	feedbackDay: number;
 	isBestFeedback: boolean;
 }
+
+
+/* ------------------ 상담 관련 ------------------ */
+
+/** 상담 시간 슬롯 타입 */
+export type TimeSlot = "H09" | "H10" | "H11" | "H13" | "H14" | "H15" | "H16" | "H17" | "H18";
+
+/** 상담 가능 시간대 DTO */
+export interface SlotAvailabilityDTO {
+	timeSlot: TimeSlot;
+	available: boolean;
+}
+
+/** 상담 예약 생성 요청 */
+export interface ConsultationCreateRequest {
+	date: string; // YYYY-MM-DD 형식
+	time: string; // HH:MM:SS 형식
+}
+
+/** 상담 예약 수정 요청 */
+export interface ConsultationUpdateRequest {
+	oldConsultationId: number;
+	newDate: string; // YYYY-MM-DD 형식
+	newTime: string; // HH:MM:SS 형식
+}
+
+/** 상담 예약 응답 DTO */
+export interface ConsultationResponse {
+	id: number;
+	date: string; // YYYY-MM-DD 형식
+	time: string; // HH:MM:SS 형식
+}
