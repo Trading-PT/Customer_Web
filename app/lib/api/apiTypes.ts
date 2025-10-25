@@ -538,3 +538,45 @@ export interface ChangeRequestResponse {
 	processedAt?: string; // ISO 8601 형식
 	rejectionReason?: string;
 }
+
+
+/* ------------------ 레벨테스트 관련 ------------------ */
+
+/** 문제 유형 */
+export type ProblemType = "MULTIPLE_CHOICE" | "SHORT_ANSWER" | "SUBJECTIVE";
+
+/** 객관식 선택지 */
+export interface MultipleChoicePayload {
+	choice1?: string;
+	choice2?: string;
+	choice3?: string;
+	choice4?: string;
+	choice5?: string;
+}
+
+/** 레벨테스트 문제 DTO (유저용) */
+export interface LevelTestQuestionUserResponse {
+	questionId: number;
+	content: string;
+	score: number;
+	problemType: ProblemType;
+	imageUrl?: string;
+	multipleChoice?: MultipleChoicePayload;
+}
+
+/** 문제별 응답 정보 */
+export interface QuestionAnswer {
+	questionId: number;
+	choiceNumber?: string; // 객관식일 경우 선택 번호 (예: "1" 또는 "1,3")
+	answerText?: string; // 단답형/서술형일 경우 작성한 답변 내용
+}
+
+/** 레벨테스트 제출 요청 DTO */
+export interface LeveltestSubmitRequest {
+	answers: QuestionAnswer[];
+}
+
+/** 레벨테스트 제출 응답 DTO */
+export interface LeveltestAttemptSubmitResponse {
+	attemptId: number;
+}

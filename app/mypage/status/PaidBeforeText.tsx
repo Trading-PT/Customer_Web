@@ -1,5 +1,10 @@
 // components/mypage/status/PaidBeforeTest.tsx
+"use client";
+import { useRouter } from "next/navigation";
+
 export default function PaidBeforeTest() {
+	const router = useRouter();
+
 	return (
 		<div>
 			<div className="flex w-full justify-between">
@@ -16,7 +21,10 @@ export default function PaidBeforeTest() {
 			<div className="flex bg-[#0F182B] rounded-xl p-4 gap-4 items-center justify-between text-sm text-white font-bold">
 				고객님에게 딱 맞는 트레이너 배정을 위해, 먼저 레벨테스트를 응시해주세요.
 
-				<button className="bg-[#EF5555] rounded-lg p-2 items-center justify-center text-white font-bold cursor-pointer">
+				<button
+					onClick={() => router.push("/leveltest")}
+					className="bg-[#EF5555] rounded-lg p-2 items-center justify-center text-white font-bold cursor-pointer hover:bg-[#DC4444] transition-colors"
+				>
 					레벨테스트 시작
 				</button>
 			</div>
