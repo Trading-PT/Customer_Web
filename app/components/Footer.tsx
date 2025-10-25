@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 const footerData = {
 	companyName: "로얄 트레이딩 아카데미",
 	ceo: "김동욱",
-	businessNumber: "02 887 4810",
-	mailOrderNumber: "570 05 03924",
-	address: "관악구 성현로80 112동 901호",
+	businessNumber: "570-03-03924",
+	mailOrderNumber: "02 887 4810",
+	address: "서울특별시 금천구 가산디지털2로 46, 305호",
 	postalCode: "08725",
 	email: " rlaehddnr4810@naver.com",
-	phone: "01093894810",
+	phone: "010-7319-4069",
 	hosting: "AWS",
 	copyright: "© 2025 TPT Inc. All Rights Reserved.",
 };
@@ -33,8 +33,7 @@ export default function Footer() {
 					{footerData.ceo}
 				</p>
 				<p>
-					사업자 등록번호 {footerData.businessNumber} | 통신판매업 신고번호{" "}
-					{footerData.mailOrderNumber}
+					사업자 등록번호 {footerData.businessNumber}
 				</p>
 				<p>
 					주소 {footerData.address} ({footerData.postalCode})

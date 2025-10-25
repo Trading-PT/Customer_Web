@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import ReviewSummary from "./ReviewSummary";
 import SubscribeModal from "../mypage/subscribeModal";
+import { useNicepayPayment } from "../mypage/useNicePayments";
 
 // 리뷰 타입
 type Review = {
@@ -45,6 +46,7 @@ const RollingNumber = ({ value }: { value: number }) => {
 
 export default function ReviewPage() {
 	const [isSubModalOpen, setIsSubModalOpen] = useState(false);
+	const { openPayment } = useNicepayPayment();
 
 	const mockReviews: Review[] = [
 		{
@@ -148,6 +150,10 @@ export default function ReviewPage() {
 				<SubscribeModal
 					isOpen={isSubModalOpen}
 					onClose={() => setIsSubModalOpen(false)}
+					onConfirmPayment={() => {
+						setIsSubModalOpen(false);
+						openPayment(); // 결제창 열기
+					}}
 				/>
 			</div>
 

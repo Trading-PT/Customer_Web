@@ -4,6 +4,7 @@ import AuthHeader from "./components/AuthHeader";
 import Footer from "./components/Footer";
 import { useAuthCheck } from "./stores/useAuthCheck";
 import AuthInitializer from "./components/AuthInitializer";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "TPT",
@@ -31,6 +32,8 @@ export default function RootLayout({
         {children}
         <Footer />
         <div id="portal-root" />
+        {/* NICEPAY 결제 모듈 SDK */}
+        <Script src="https://pg-web.nicepay.co.kr/v3/common/js/nicepay-pgweb.js" strategy="afterInteractive" />
       </body>
     </html>
   );

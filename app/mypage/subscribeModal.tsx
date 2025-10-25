@@ -6,9 +6,14 @@ import CustomModal from "../components/CustomModal";
 interface SubscribeModalProps {
 	isOpen: boolean;
 	onClose: () => void;
+	onConfirmPayment: () => void;
 }
 
-export default function SubscribeModal({ isOpen, onClose }: SubscribeModalProps) {
+export default function SubscribeModal({
+	isOpen,
+	onClose,
+	onConfirmPayment,
+}: SubscribeModalProps) {
 	const router = useRouter();
 
 	return (
@@ -58,13 +63,11 @@ export default function SubscribeModal({ isOpen, onClose }: SubscribeModalProps)
 					>
 						전화상담 신청하기
 					</CustomButton>
+					{/* 부모에서 전달받은 결제 실행 */}
 					<CustomButton
 						variant="prettyFull"
 						width="w-full sm:w-md"
-						onClick={() => {
-							onClose();
-							alert("정기 결제 구독하기 클릭됨");
-						}}
+						onClick={onConfirmPayment}
 					>
 						TPT 정기 결제 구독하기
 					</CustomButton>

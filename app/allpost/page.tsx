@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CustomDropdownButton } from "../components/CustomDropdown";
 import SubscribeModal from "../mypage/subscribeModal";
+import { useNicepayPayment } from "../mypage/useNicePayments";
 
 interface Post {
 	id: number;
@@ -67,6 +68,7 @@ export default function AllPost() {
 	const [selectedCategory, setSelectedCategory] = useState("전체 카테고리");
 	const [selectedTrainer, setSelectedTrainer] = useState("전체 트레이너");
 	const [isSubModalOpen, setIsSubModalOpen] = useState(false);
+	const { openPayment } = useNicepayPayment();
 
 	const categories = ["전체 카테고리", "주식", "채권", "ETF"];
 	const trainers = ["전체 트레이너", "트레이너 A", "트레이너 B", "트레이너 C"];
@@ -93,6 +95,10 @@ export default function AllPost() {
 			<SubscribeModal
 				isOpen={isSubModalOpen}
 				onClose={() => setIsSubModalOpen(false)}
+				onConfirmPayment={() => {
+          		setIsSubModalOpen(false);
+          		openPayment(); // 결제창 열기
+        }}
 			/>
 
 			{/* 필터 영역 */}
