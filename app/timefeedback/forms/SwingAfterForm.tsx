@@ -19,6 +19,11 @@ export default function SwingAfterView({ detail }: SwingAfterViewProps) {
 		}
 	};
 
+	// 멤버십 등급 라벨
+	const getMembershipLabel = (level: string) => {
+		return level === "BASIC" ? "무료" : "Pro";
+	};
+
 	// 등급 한글 변환
 	const getGradeLabel = (grade: string | null) => {
 		if (!grade) return "-";
@@ -48,6 +53,7 @@ export default function SwingAfterView({ detail }: SwingAfterViewProps) {
 			<div className="flex items-center gap-3 mb-6">
 				<span className="px-3 py-1 text-white rounded bg-orange-400">스윙</span>
 				<span className="px-3 py-1 border rounded">{getCourseStatusLabel(detail.courseStatus)}</span>
+				<span className="px-3 py-1 border rounded">{getMembershipLabel(detail.membershipLevel)}</span>
 			</div>
 
 			{/* 기록 날짜 */}

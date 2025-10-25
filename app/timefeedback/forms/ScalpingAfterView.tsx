@@ -17,12 +17,18 @@ export default function ScalpingAfterView({ detail }: ScalpingAfterViewProps) {
 			default: return status;
 		}
 	};
+
+	// 멤버십 등급 라벨
+	const getMembershipLabel = (level: string) => {
+		return level === "BASIC" ? "무료" : "Pro";
+	};
 	return (
 		<div className="flex flex-col gap-5 text-left p-5 w-full max-w-lg">
 			{/* 상단 */}
 			<div className="flex items-center gap-3 mb-6">
 				<span className="px-3 py-1 text-white rounded bg-sky-400">스켈핑</span>
 				<span className="px-3 py-1 border rounded">{getCourseStatusLabel(detail.courseStatus)}</span>
+				<span className="px-3 py-1 border rounded">{getMembershipLabel(detail.membershipLevel)}</span>
 			</div>
 
 			{/* 기록 날짜 */}

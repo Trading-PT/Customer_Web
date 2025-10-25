@@ -60,6 +60,12 @@ export default function BasicOrBeforeForm({
 				onWeekChange={handleWeekChange}
 			/>
 
+			{/* 안내 문구 */}
+			<div className="text-sm text-gray-600 -mt-3">
+				담당 트레이너에게 피드백을 요청합니다.
+			</div>
+
+			{/* === 2. 기본 정보 입력 섹션 === */}
 			{/* 날짜 */}
 			<div>
 				<label className="block mb-1 font-medium">기록 날짜</label>
@@ -125,36 +131,54 @@ export default function BasicOrBeforeForm({
 				/>
 			</div>
 
-			{/* 포지션 선택 */}
-			<div className="flex gap-3">
-				<button
-					type="button"
-					onClick={() => setPosition("LONG")}
-					className={`px-4 py-2 cursor-pointer rounded ${position === "LONG"
-						? "bg-[#2AC287] text-white"
-						: "bg-[#F4F4F4] text-black"
-						}`}
-				>
-					Long
-				</button>
-				<button
-					type="button"
-					onClick={() => setPosition("SHORT")}
-					className={`px-4 py-2 cursor-pointer rounded ${position === "SHORT"
-						? "bg-[#F74C5F] text-white"
-						: "bg-[#F4F4F4] text-black"
-						}`}
-				>
-					Short
-				</button>
+			{/* === 3. 포지션 설정 섹션 === */}
+			{/* 레버리지 */}
+			<div>
+				<label className="block mb-1 font-medium">레버리지 (배점)</label>
+				<input
+					type="number"
+					name="leverage"
+					value={form.leverage}
+					onChange={handleChange}
+					className="bg-[#F4F4F4] rounded p-2 w-full"
+				/>
 			</div>
 
+			{/* 포지션 선택 */}
+			<div>
+				<label className="block mb-1 font-medium">포지션</label>
+				<div className="flex gap-3">
+					<button
+						type="button"
+						onClick={() => setPosition("LONG")}
+						className={`flex-1 px-4 py-2 cursor-pointer rounded ${position === "LONG"
+							? "bg-[#2AC287] text-white"
+							: "bg-[#F4F4F4] text-black"
+							}`}
+					>
+						Long
+					</button>
+					<button
+						type="button"
+						onClick={() => setPosition("SHORT")}
+						className={`flex-1 px-4 py-2 cursor-pointer rounded ${position === "SHORT"
+							? "bg-[#F74C5F] text-white"
+							: "bg-[#F4F4F4] text-black"
+							}`}
+					>
+						Short
+					</button>
+				</div>
+			</div>
+
+			{/* === 4. 손익 및 리스크 섹션 === */}
 			{/* 비중 */}
 			<div>
 				<label className="block mb-1 font-medium">비중 (운용 자금 대비)</label>
 				<input
 					type="number"
 					name="operatingFundsRatio"
+					placeholder="%"
 					value={form.operatingFundsRatio}
 					onChange={handleChange}
 					className="bg-[#F4F4F4] rounded p-2 w-full"
@@ -168,6 +192,7 @@ export default function BasicOrBeforeForm({
 					<input
 						type="number"
 						name="entryPrice"
+						placeholder="진입가"
 						value={form.entryPrice}
 						onChange={handleChange}
 						className="bg-[#F4F4F4] rounded p-2 w-full"
@@ -178,6 +203,7 @@ export default function BasicOrBeforeForm({
 					<input
 						type="number"
 						name="exitPrice"
+						placeholder="탈출가"
 						value={form.exitPrice}
 						onChange={handleChange}
 						className="bg-[#F4F4F4] rounded p-2 w-full"
@@ -185,28 +211,17 @@ export default function BasicOrBeforeForm({
 				</div>
 			</div>
 
-			{/* 리스크 테이킹 / 레버리지 */}
-			<div className="flex gap-4">
-				<div className="flex-1">
-					<label className="block mb-1 font-medium">리스크 테이킹 (%)</label>
-					<input
-						type="number"
-						name="riskTaking"
-						value={form.riskTaking}
-						onChange={handleChange}
-						className="bg-[#F4F4F4] rounded p-2 w-full"
-					/>
-				</div>
-				<div className="flex-1">
-					<label className="block mb-1 font-medium">레버리지 (배점)</label>
-					<input
-						type="number"
-						name="leverage"
-						value={form.leverage}
-						onChange={handleChange}
-						className="bg-[#F4F4F4] rounded p-2 w-full"
-					/>
-				</div>
+			{/* 리스크 테이킹 */}
+			<div>
+				<label className="block mb-1 font-medium">Risk Taking (%)</label>
+				<input
+					type="number"
+					name="riskTaking"
+					placeholder="%"
+					value={form.riskTaking}
+					onChange={handleChange}
+					className="bg-[#F4F4F4] rounded p-2 w-full"
+				/>
 			</div>
 
 			{/* 손절 / 익절 */}
@@ -216,6 +231,7 @@ export default function BasicOrBeforeForm({
 					<input
 						type="number"
 						name="settingStopLoss"
+						placeholder="손절가"
 						value={form.settingStopLoss}
 						onChange={handleChange}
 						className="bg-[#F4F4F4] rounded p-2 w-full"
@@ -226,6 +242,7 @@ export default function BasicOrBeforeForm({
 					<input
 						type="number"
 						name="settingTakeProfit"
+						placeholder="익절가"
 						value={form.settingTakeProfit}
 						onChange={handleChange}
 						className="bg-[#F4F4F4] rounded p-2 w-full"
@@ -272,13 +289,57 @@ export default function BasicOrBeforeForm({
 					<span className="font-semibold">R&amp;R:</span>
 					<span>{rr}</span>
 				</div>
+
+				{/* 손익 결과 게이지바 */}
+				<div className="relative w-full h-20 mt-4">
+					<div className="absolute top-1/2 w-full border-t border-gray-300" />
+					<div className="flex justify-between text-xs text-gray-500 mt-6">
+						{Array.from({ length: 7 }, (_, i) => (
+							<span key={i}>{-3 + i}</span>
+						))}
+					</div>
+					<div
+						className={`absolute top-2 ${
+							(() => {
+								const gaugeMin = -3;
+								const gaugeMax = 3;
+								const actualPl = isPositive ? pl : -pl;
+								const normalized = Math.min(
+									Math.max(actualPl / Number(form.riskTaking || riskTaking), gaugeMin),
+									gaugeMax
+								);
+								if (normalized <= -2) return "text-red-500";
+								if (normalized >= 2) return "text-green-600";
+								return "text-gray-500";
+							})()
+						}`}
+						style={{
+							left: `${(() => {
+								const gaugeMin = -3;
+								const gaugeMax = 3;
+								const actualPl = isPositive ? pl : -pl;
+								const normalized = Math.min(
+									Math.max(actualPl / Number(form.riskTaking || riskTaking), gaugeMin),
+									gaugeMax
+								);
+								return ((normalized - gaugeMin) / (gaugeMax - gaugeMin)) * 100;
+							})()}%`,
+							transform: "translateX(-50%)",
+						}}
+					>
+						▼
+					</div>
+					<span className="absolute left-0 top-0 text-red-500 font-semibold">Fail</span>
+					<span className="absolute right-0 top-0 text-green-600 font-semibold">Success</span>
+				</div>
 			</div>
 
-			{/* 복기 영역 */}
+			{/* === 5. 피드백 참고 입력 섹션 === */}
 			<div>
 				<label className="block mb-1 font-medium">포지션 진입 근거</label>
 				<textarea
 					name="positionStartReason"
+					placeholder="포지션 진입 이유를 작성해주세요."
 					value={form.positionStartReason}
 					onChange={handleChange}
 					className="bg-[#F4F4F4] rounded p-2 w-full h-24"
@@ -289,6 +350,7 @@ export default function BasicOrBeforeForm({
 				<label className="block mb-1 font-medium">포지션 탈출 근거</label>
 				<textarea
 					name="positionEndReason"
+					placeholder="포지션 탈출 이유를 작성해주세요."
 					value={form.positionEndReason}
 					onChange={handleChange}
 					className="bg-[#F4F4F4] rounded p-2 w-full h-24"
@@ -299,6 +361,7 @@ export default function BasicOrBeforeForm({
 				<label className="block mb-1 font-medium">최종 복기</label>
 				<textarea
 					name="tradingReview"
+					placeholder="매매에 대한 종합적인 복기를 작성해주세요."
 					value={form.tradingReview}
 					onChange={handleChange}
 					className="bg-[#F4F4F4] rounded p-2 w-full h-24"
@@ -310,7 +373,7 @@ export default function BasicOrBeforeForm({
 				type="submit"
 				className="bg-gradient-to-r from-[#D2C693] to-[#928346] text-white py-3 rounded mb-20 cursor-pointer"
 			>
-				매매일지 기록하기
+				트레이딩 피드백 요청하기
 			</button>
 		</form>
 	);

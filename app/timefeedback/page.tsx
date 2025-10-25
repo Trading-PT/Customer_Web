@@ -86,6 +86,9 @@ export default function Page() {
 	const day = date.getDate().toString();
 	const time = date.toTimeString().split(" ")[0];
 
+	// membershipLevel이 BASIC인 경우 BasicOrBeforeView 사용, PREMIUM인 경우 각 투자타입별 AfterView 사용
+	const shouldUseBasicView = detail.membershipLevel === "BASIC";
+
 	return (
 		<div className="w-full p-6 mt-20 flex flex-col items-center">
 			<TimeFeedback
@@ -97,19 +100,20 @@ export default function Page() {
 				title={`${month}/${day} (${investmentType}) 작성 완료`}
 			/>
 
-			{investmentType === "SWING" && feedbackDetail.swingDetail && (
-				<SwingAfterView detail={feedbackDetail.swingDetail} />
-			)}
-			{investmentType === "DAY" && feedbackDetail.dayDetail && (
-				<DayAfterView detail={feedbackDetail.dayDetail} />
-			)}
-			{investmentType === "SCALPING" && feedbackDetail.scalpingDetail && (
-				<ScalpingAfterView detail={feedbackDetail.scalpingDetail} />
-			)}
-
-			{/* 피드백 답변이 있는 경우 표시 */}
-			{feedbackDetail.feedbackResponse && (
-				<BasicOrBeforeView response={feedbackDetail.feedbackResponse} />
+			{shouldUseBasicView ? (
+				<BasicOrBeforeView detail={detail} investmentType={investmentType} />
+			) : (
+				<>
+					{investmentType === "SWING" && feedbackDetail.swingDetail && (
+						<SwingAfterView detail={feedbackDetail.swingDetail} />
+					)}
+					{investmentType === "DAY" && feedbackDetail.dayDetail && (
+						<DayAfterView detail={feedbackDetail.dayDetail} />
+					)}
+					{investmentType === "SCALPING" && feedbackDetail.scalpingDetail && (
+						<ScalpingAfterView detail={feedbackDetail.scalpingDetail} />
+					)}
+				</>
 			)}
 		</div>
 	);

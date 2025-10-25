@@ -350,6 +350,7 @@ export interface DayFeedbackRequestDetailResponseDTO {
 	createdAt: string;
 	investmentType: InvestmentType;
 	courseStatus: CourseStatus;
+	membershipLevel: "BASIC" | "PREMIUM";
 	feedbackYear: number;
 	feedbackMonth: number;
 	feedbackWeek: number;
@@ -387,6 +388,7 @@ export interface ScalpingFeedbackRequestDetailResponseDTO {
 	createdAt: string;
 	investmentType: InvestmentType;
 	courseStatus: CourseStatus;
+	membershipLevel: "BASIC" | "PREMIUM";
 	feedbackYear: number;
 	feedbackMonth: number;
 	feedbackWeek: number;
@@ -418,6 +420,7 @@ export interface SwingFeedbackRequestDetailResponseDTO {
 	createdAt: string;
 	investmentType: InvestmentType;
 	courseStatus: CourseStatus;
+	membershipLevel: "BASIC" | "PREMIUM";
 	feedbackRequestDate: string;
 	status: FeedbackStatus;
 	feedbackYear: number;
