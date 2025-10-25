@@ -511,3 +511,30 @@ export interface ConsultationResponse {
 	date: string; // YYYY-MM-DD 형식
 	time: string; // HH:MM:SS 형식
 }
+
+
+/* ------------------ 투자 유형 변경 신청 관련 ------------------ */
+
+/** 투자 유형 변경 신청 상태 */
+export type ChangeRequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+
+/** 투자 유형 변경 신청 생성 요청 */
+export interface CreateChangeRequest {
+	requestedType: InvestmentType;
+	reason?: string;
+}
+
+/** 투자 유형 변경 신청 응답 DTO */
+export interface ChangeRequestResponse {
+	id: number;
+	customerId: number;
+	customerName: string;
+	currentType: InvestmentType;
+	requestedType: InvestmentType;
+	status: ChangeRequestStatus;
+	reason?: string;
+	requestedDate: string; // YYYY-MM-DD 형식
+	targetChangeDate: string; // YYYY-MM-DD 형식
+	processedAt?: string; // ISO 8601 형식
+	rejectionReason?: string;
+}

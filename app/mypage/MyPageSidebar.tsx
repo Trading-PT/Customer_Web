@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import CustomModal from "../components/CustomModal";
 import ResetPasswordAuthModal from "./ResetPasswordAuthModal";
+import InvestmentTypeChangeModal from "./InvestmentTypeChangeModal";
 import { useAuth } from "../hooks/useAuth";
 import { useAuthStore } from "../stores/authStore";
 import { UserStatus } from "../mocks/status";
@@ -96,12 +97,11 @@ export default function MyPageSidebar({ userData }: Props) {
 			</CustomModal>
 
 			{/* 투자유형 변경 */}
-			<CustomModal variant={1} isOpen={openModal === "type"} onClose={() => setOpenModal(null)} width="max-w-xl">
-				<h2 className="text-lg mb-4 font-semibold">투자유형 변경</h2>
-				<p className="text-sm text-black">
-					현재 투자 유형: <span className="font-medium">{userData.investmentType}</span>
-				</p>
-			</CustomModal>
+			<InvestmentTypeChangeModal
+				isOpen={openModal === "type"}
+				onClose={() => setOpenModal(null)}
+				currentType={userData.investmentType}
+			/>
 		</aside>
 	);
 }
