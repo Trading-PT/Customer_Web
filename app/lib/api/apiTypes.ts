@@ -462,3 +462,20 @@ export interface FeedbackRequestDetailResponseDTO {
 	swingDetail?: SwingFeedbackRequestDetailResponseDTO;
 	feedbackResponse?: FeedbackResponseDTO;
 }
+
+/** 피드백 요청 목록 아이템 (특정 날짜의 피드백 요청 목록 조회용) */
+export interface FeedbackRequestListItemResponseDTO {
+	id: number;
+	customerId: number;
+	customerName: string;
+	investmentType: InvestmentType;
+	courseStatus: CourseStatus;
+	status: FeedbackStatus;
+	createdAt: string;
+	feedbackRequestDate: string;
+	feedbackYear: number;
+	feedbackMonth: number;
+	feedbackWeek: number;
+	feedbackDay: number;
+	isBestFeedback: boolean;
+}

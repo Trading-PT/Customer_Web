@@ -6,6 +6,7 @@ import {
 	ScalpingFeedbackRequest,
 	FeedbackListResponseDTO,
 	FeedbackRequestDetailResponseDTO,
+	FeedbackRequestListItemResponseDTO,
 } from "./apiTypes";
 
 export const feedbackAPI = {
@@ -44,5 +45,17 @@ export const feedbackAPI = {
 	/** 피드백 요청 삭제 */
 	deleteFeedbackRequest(feedbackRequestId: number): Promise<ApiResponse> {
 		return fetcher(`/api/v1/feedback-requests/${feedbackRequestId}`, { method: "DELETE" });
+	},
+
+	/** 특정 날짜의 피드백 요청 목록 조회 */
+	getFeedbackRequestsByDate(
+		year: number,
+		month: number,
+		day: number
+	): Promise<ApiResponse<FeedbackRequestListItemResponseDTO[]>> {
+		return fetcher(
+			`/api/v1/feedback-requests/customers/me/years/${year}/months/${month}/days/${day}`,
+			{ method: "GET" }
+		);
 	},
 };
