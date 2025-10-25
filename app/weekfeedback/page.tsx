@@ -5,6 +5,7 @@ import { tradingAPI } from "../lib/api";
 
 interface DayData {
 	day: string;
+	dayNumber: number; // 실제 날짜 (1-31)
 	trades: number | string;
 	wins: number | string;
 	losses: number | string;
@@ -92,13 +93,15 @@ export default function Page({
 					const dayNames = ["월", "화", "수", "목", "금", "토", "일"];
 					const daysData: DayData[] =
 						data.weeklyFeedbackSummaryResponseDTO.weeklyWeekFeedbackSummaryResponseDTOS.map(
-							(dayData, index) => {
+							(dayData) => {
 								const dayDate = new Date(dayData.date);
 								const dayOfWeek = dayDate.getDay();
 								const dayName = dayNames[dayOfWeek === 0 ? 6 : dayOfWeek - 1];
+								const dayNumber = dayDate.getDate(); // 실제 날짜 추출 (1-31)
 
 								return {
 									day: dayName,
+									dayNumber: dayNumber,
 									trades: dayData.tradingCount || "-",
 									wins: dayData.winCount || "-",
 									losses: dayData.lossCount || "-",

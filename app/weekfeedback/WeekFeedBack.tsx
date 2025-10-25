@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 interface DayData {
 	day: string; // 요일
+	dayNumber: number; // 실제 날짜 (1-31)
 	trades: number | string;
 	wins: number | string;
 	losses: number | string;
@@ -54,8 +55,8 @@ export default function WeekFeedback({
 	const router = useRouter();
 	const [memo, setMemo] = useState(initialMemo);
 
-	const handleDayClick = (day: string) => {
-		router.push(`/dayfeedback?year=${year}&month=${month}&week=${week}&day=${day}`);
+	const handleDayClick = (dayNumber: number) => {
+		router.push(`/dayfeedback?year=${year}&month=${month}&week=${week}&day=${dayNumber}`);
 	};
 
 	return (
@@ -79,7 +80,7 @@ export default function WeekFeedback({
 								>
 									<button
 										className="relative px-2 sm:px-3 py-1 bg-gray-800 text-white text-xs sm:text-sm rounded-md cursor-pointer"
-										onClick={() => handleDayClick(d.day)}
+										onClick={() => handleDayClick(d.dayNumber)}
 									>
 										{d.day}
 										{d.new && (
