@@ -1,6 +1,9 @@
+"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SubscribeModal from "../subscribeModal";
+import TokenFeedbackButton from "../TokenFeedbackButton";
+import BasicFeedbackButton from "../BasicFeedbackButton";
 import { consultationAPI } from "../../lib/api";
 import type { ConsultationResponse } from "../../lib/api/apiTypes";
 
@@ -133,6 +136,10 @@ export default function UIDApproved() {
 					</div>
 				)}
 			</div>
+
+			{/* 플로팅 버튼들 */}
+			<TokenFeedbackButton />
+			<BasicFeedbackButton />
 		</div>
 	);
 }

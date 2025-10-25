@@ -30,25 +30,26 @@ export default function MyPage() {
 
 	const { myInfo } = useAuth();
 	const [userData, setUserData] = useState<{
-		name: string; // 이름 
-		username: string, // 닉네임 
+		name: string; // 이름
+		username: string, // 닉네임
 		email: string;
 		phone?: string;
 		myProfileImage?: string | null;
 		trainerProfileImage?: string | null;
 
-		investmentType: string, // 투자 유형 
+		investmentType: string, // 투자 유형
 		userStatus: UserStatus, // 사용자 상태
-		exchangeName: string, // 거래소 이름 
+		exchangeName: string, // 거래소 이름
 		uid: string, // UID
 
-		trainerId: number | null, // 구독 X인 경우 트레이너 없음 
+		trainerId: number | null, // 구독 X인 경우 트레이너 없음
 		trainerName: string | null,
 
 		isCourseCompleted: boolean, // 완강 여부
-		isPremium: boolean, // 구독 고객인지 여부 
+		isPremium: boolean, // 구독 고객인지 여부
 
-		paymentMethod: string // 결제수단 
+		paymentMethod: string, // 결제수단
+		remainingToken?: number // 남은 토큰 개수
 	} | null>(null);
 
 	useEffect(() => {
@@ -76,6 +77,7 @@ export default function MyPage() {
 					isCourseCompleted: res.data.isCourseCompleted,
 					isPremium: res.data.isPremium,
 					paymentMethod: res.data.paymentMethod,
+					remainingToken: (res.data as any).remainingToken ?? 0, // 백엔드에서 필드 추가 필요
 				});
 			}
 		};

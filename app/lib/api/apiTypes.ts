@@ -58,6 +58,7 @@ export interface LoginResponse {
 	investmentType: string;
 	isPremium: boolean;
 	isCourseCompleted: boolean;
+	remainingToken?: number; // 남은 토큰 개수
 }
 
 /** 아이디 찾기 결과 */

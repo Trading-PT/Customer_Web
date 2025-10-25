@@ -70,6 +70,11 @@ export const authAPI = {
 		return fetcher("/api/v1/auth/me");
 	},
 
+	/** /me API 호출 (getUserProfile과 동일) */
+	me(): Promise<ApiResponse> {
+		return fetcher("/api/v1/auth/me");
+	},
+
 	getSocialInfo(): Promise<
 		ApiResponse<{
 			userId: number;

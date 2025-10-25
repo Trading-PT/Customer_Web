@@ -31,6 +31,7 @@ type UserData = {
 	isCourseCompleted: boolean;
 	isPremium: boolean;
 	paymentMethod: string;
+	remainingToken?: number;
 };
 
 type Props = { userData: UserData };
@@ -67,6 +68,7 @@ export default function MyPageSidebar({ userData }: Props) {
 					profileImage={profileImage}
 					onChange={handleProfileImageChange}
 					uploading={uploading}
+					remainingToken={userData.remainingToken}
 				/>
 
 				<AccountInfoSection email={userData.email} phone={userData.phone} />
