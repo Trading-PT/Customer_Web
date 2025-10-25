@@ -18,7 +18,7 @@ export const mapSwingFormData = (formData: any): FormData => {
 	fd.append("position", formData.position || "LONG");
 	fd.append("riskTaking", String(formData.risk || 0));
 	fd.append("leverage", String(formData.leverage || 0));
-	fd.append("pnl", String(formData.pl || 0));
+	fd.append("pnl", String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
 	fd.append("rnr", String(formData.rnr || 0));
 	fd.append("tradingReview", formData.tradingReview || "");
 	fd.append("operatingFundsRatio", String(formData.operatingFundsRatio || 0));
@@ -44,6 +44,7 @@ export const mapSwingFormData = (formData: any): FormData => {
 	fd.append("entryPoint3", formData.entryPoint3 || new Date().toISOString());
 	fd.append("grade", formData.grade || "S_PLUS");
 
+	console.log("SWING: formData.pl 원본 값:", formData.pl);
 	console.log("SWING: append 후 form data:----------------");
 	fd.forEach((value, key) => console.log(key, value));
 
@@ -71,7 +72,7 @@ export const mapDayFormData = (formData: any): FormData => {
 	fd.append("leverage", String(formData.risk || 0));
 	fd.append("position", formData.position || "LONG");
 	// fd.append("position", "LONG");
-	fd.append("pnl", String(formData.pl || 0));
+	fd.append("pnl", String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
 	fd.append("rnr", String(formData.rnr || 0));
 	fd.append("tradingReview", formData.tradingReview || "string");
 	fd.append("operatingFundsRatio", String(formData.operatingFundsRatio || 0)); // 완강 전 필수
@@ -95,6 +96,7 @@ export const mapDayFormData = (formData: any): FormData => {
 	fd.append("positionStartReason", formData.positionStartReason || "string"); // 완강 전 필수
 	fd.append("positionEndReason", formData.positionEndReason || "string"); // 완강 전 필수
 
+	console.log("DAY: formData.pl 원본 값:", formData.pl);
 	console.log("DAY: append 후 form data:----------------");
 	fd.forEach((value, key) => console.log(key, value));
 
@@ -116,7 +118,7 @@ export const mapScalpingFormData = (formData: any): FormData => {
 	fd.append("riskTaking", String(formData.risk || 0));
 	fd.append("leverage", String(formData.leverage || 0));
 	fd.append("position", formData.position || "LONG");
-	fd.append("pnl", String(formData.pl || 0));
+	fd.append("pnl", String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
 	fd.append("rnr", String(formData.rnr || 0));
 
 	// 항상 필수 필드 (스켈핑 API 스펙)
@@ -134,6 +136,7 @@ export const mapScalpingFormData = (formData: any): FormData => {
 	fd.append("tradingReview", formData.tradingReview || "");
 	fd.append("trainerFeedbackRequestContent", formData.trainerFeedback || "");
 
+	console.log("SCALPING: formData.pl 원본 값:", formData.pl);
 	console.log("SCALPING: append 후 form data:----------------");
 	fd.forEach((value, key) => console.log(key, value));
 
@@ -161,8 +164,8 @@ export const mapFreeFormData = (formData: any): FormData => {
 
 	fd.append("position", formData.position || "LONG");
 	fd.append("riskTaking", String(formData.riskTaking || 0));
-	fd.append("leverage", String(formData.leverage || 0)); 
-	fd.append("pnl", String(formData.pl || 0));
+	fd.append("leverage", String(formData.leverage || 0));
+	fd.append("pnl", String(formData.pl !== undefined && formData.pl !== null ? formData.pl : 0));
 	fd.append("rnr", String(formData.rnr || 0));
 
 	fd.append("operatingFundsRatio", String(formData.operatingFundsRatio || 0));
@@ -175,6 +178,7 @@ export const mapFreeFormData = (formData: any): FormData => {
 	fd.append("positionEndReason", formData.positionEndReason || "string");
 	fd.append("tradingReview", formData.tradingReview || "");
 
+	console.log("FREE: formData.pl 원본 값:", formData.pl);
 	console.log("FREE: append 후 form data:----------------");
 	fd.forEach((value, key) => console.log(key, value));
 

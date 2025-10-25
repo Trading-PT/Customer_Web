@@ -18,6 +18,19 @@ interface WeekSummary {
 	weeklyPnL: string;
 }
 
+interface WeekComparison {
+	before: {
+		winRate: string;
+		profitLossRatio: string;
+		weeklyPnL: string;
+	};
+	current: {
+		winRate: string;
+		profitLossRatio: string;
+		weeklyPnL: string;
+	};
+}
+
 export default function Page({
 	searchParams,
 }: {
@@ -34,6 +47,18 @@ export default function Page({
 		winRate: "-",
 		profitLossRatio: "-",
 		weeklyPnL: "-",
+	});
+	const [comparison, setComparison] = useState<WeekComparison>({
+		before: {
+			winRate: "-",
+			profitLossRatio: "-",
+			weeklyPnL: "-",
+		},
+		current: {
+			winRate: "-",
+			profitLossRatio: "-",
+			weeklyPnL: "-",
+		},
 	});
 	const [memo, setMemo] = useState("");
 
@@ -93,6 +118,22 @@ export default function Page({
 						weeklyPnL: `${data.weeklyFeedbackSummaryResponseDTO.weeklyPnl.toFixed(2)}`,
 					});
 
+					// 성과 비교 데이터 (지난 주 vs 이번 주)
+					if (data.performanceComparison) {
+						setComparison({
+							before: {
+								winRate: `${data.performanceComparison.before.winRate.toFixed(1)}%`,
+								profitLossRatio: `${data.performanceComparison.before.rnr.toFixed(2)}`,
+								weeklyPnL: `${data.performanceComparison.before.pnl.toFixed(2)}`,
+							},
+							current: {
+								winRate: `${data.performanceComparison.current.winRate.toFixed(1)}%`,
+								profitLossRatio: `${data.performanceComparison.current.rnr.toFixed(2)}`,
+								weeklyPnL: `${data.performanceComparison.current.pnl.toFixed(2)}`,
+							},
+						});
+					}
+
 					// 메모 데이터 (있는 경우)
 					if (data.memo) {
 						setMemo(data.memo);
@@ -125,6 +166,7 @@ export default function Page({
 			week={weekParam}
 			days={days}
 			summary={summary}
+			comparison={comparison}
 			initialMemo={memo}
 		/>
 	);

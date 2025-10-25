@@ -19,12 +19,26 @@ interface WeekSummary {
 	weeklyPnL: string;
 }
 
+interface WeekComparison {
+	before: {
+		winRate: string;
+		profitLossRatio: string;
+		weeklyPnL: string;
+	};
+	current: {
+		winRate: string;
+		profitLossRatio: string;
+		weeklyPnL: string;
+	};
+}
+
 interface WeekFeedbackProps {
 	year: string;
 	month: string;
 	week: string; // ex) "셋째 주"
 	days: DayData[];
 	summary: WeekSummary;
+	comparison: WeekComparison;
 	initialMemo?: string;
 }
 
@@ -34,6 +48,7 @@ export default function WeekFeedback({
 	week,
 	days,
 	summary,
+	comparison,
 	initialMemo = "",
 }: WeekFeedbackProps) {
 	const router = useRouter();
@@ -161,15 +176,15 @@ export default function WeekFeedback({
 						<div className="border-t-2 border-yellow-900 pt-3 sm:pt-4">
 							<div className="flex justify-between py-2 text-gray-700 text-sm sm:text-base">
 								<span>승률</span>
-								<span>{summary.winRate}</span>
+								<span>{comparison.before.winRate}</span>
 							</div>
 							<div className="flex justify-between py-2 text-gray-700 text-sm sm:text-base">
 								<span>손익비</span>
-								<span>{summary.profitLossRatio}</span>
+								<span>{comparison.before.profitLossRatio}</span>
 							</div>
 							<div className="flex justify-between py-2 text-gray-700 text-sm sm:text-base">
 								<span>p&l</span>
-								<span>{summary.weeklyPnL}</span>
+								<span>{comparison.before.weeklyPnL}</span>
 							</div>
 						</div>
 					</div>
@@ -182,15 +197,15 @@ export default function WeekFeedback({
 						<div className="border-t-2 border-yellow-900 pt-3 sm:pt-4">
 							<div className="flex justify-between py-2 text-gray-900 font-semibold text-sm sm:text-base">
 								<span>승률</span>
-								<span>{summary.winRate}</span>
+								<span>{comparison.current.winRate}</span>
 							</div>
 							<div className="flex justify-between py-2 text-gray-900 font-semibold text-sm sm:text-base">
 								<span>손익비</span>
-								<span>{summary.profitLossRatio}</span>
+								<span>{comparison.current.profitLossRatio}</span>
 							</div>
 							<div className="flex justify-between py-2 text-gray-900 font-semibold text-sm sm:text-base">
 								<span>p&l</span>
-								<span>{summary.weeklyPnL}</span>
+								<span>{comparison.current.weeklyPnL}</span>
 							</div>
 						</div>
 					</div>
