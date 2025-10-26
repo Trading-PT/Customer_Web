@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Crown } from "lucide-react";
 import { feedbackAPI } from "../lib/api/feedbackAPI";
 import { FeedbackCardDTO } from "../lib/api/apiTypes";
+import { useAuthStore } from "../stores/authStore";
 
 export default function AllFeedback() {
 	const [crownFeedbacks, setCrownFeedbacks] = useState<FeedbackCardDTO[]>([]);
@@ -13,6 +14,7 @@ export default function AllFeedback() {
 	const [hasMore, setHasMore] = useState(false);
 	const [currentPage, setCurrentPage] = useState(0);
 	const router = useRouter();
+	const { user } = useAuthStore();
 
 	const handleNavigate = (fb: FeedbackCardDTO) => {
 		// feedbackRequestId를 사용하여 상세 페이지로 이동
@@ -110,19 +112,30 @@ export default function AllFeedback() {
 						</div>
 					)}
 
-					{/* 일반 피드백 */}
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-						{otherFeedbacks.map((fb) => (
-							<button
-								key={fb.feedbackRequestId}
-								onClick={() => handleNavigate(fb)}
-								className="cursor-pointer bg-gray-100 rounded-lg p-4 flex flex-col justify-between text-left hover:shadow-md transition-shadow"
-							>
-								<span className="font-semibold mb-2">{fb.title}</span>
-								<p className="text-sm text-gray-700 mb-4 line-clamp-2">{fb.contentPreview}</p>
-								<p className="text-xs text-gray-500 text-right">{formatDate(fb.createdAt)}</p>
-							</button>
-						))}
+					{/* 일반 피드백 - BASIC 사용자는 blur 처리 */}
+					<div className="relative">
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+							{otherFeedbacks.map((fb) => (
+								<button
+									key={fb.feedbackRequestId}
+									onClick={() => handleNavigate(fb)}
+									className="cursor-pointer bg-gray-100 rounded-lg p-4 flex flex-col justify-between text-left hover:shadow-md transition-shadow"
+								>
+									<span className="font-semibold mb-2">{fb.title}</span>
+									<p className="text-sm text-gray-700 mb-4 line-clamp-2">{fb.contentPreview}</p>
+									<p className="text-xs text-gray-500 text-right">{formatDate(fb.createdAt)}</p>
+								</button>
+							))}
+						</div>
+
+						{/* BASIC 사용자용 블러 오버레이 */}
+						{user && !user.isPremium && otherFeedbacks.length > 0 && (
+							<div className="absolute inset-0 bg-white/70 backdrop-blur-md flex items-center justify-center rounded-lg">
+								<p className="text-center text-lg font-semibold text-gray-800 px-6">
+									TPT를 구독하시고 모든 피드백을 확인하세요.
+								</p>
+							</div>
+						)}
 					</div>
 
 					{/* 더보기 버튼 */}
