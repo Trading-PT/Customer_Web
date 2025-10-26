@@ -4,6 +4,7 @@ import {
 	LevelTestQuestionUserResponse,
 	LeveltestSubmitRequest,
 	LeveltestAttemptSubmitResponse,
+	SliceResponse,
 } from "./apiTypes";
 
 /**
@@ -19,12 +20,31 @@ export const leveltestAPI = {
 		page: number = 0,
 		size: number = 100
 	): Promise<ApiResponse<LevelTestQuestionUserResponse[]>> => {
-		return fetcher<LevelTestQuestionUserResponse[]>(
+		const response = await fetcher<SliceResponse<LevelTestQuestionUserResponse>>(
 			`/api/v1/leveltests?page=${page}&size=${size}&sort=id,asc`,
 			{
 				method: "GET",
 			}
 		);
+
+		// Slice 응답에서 content 배열만 추출
+		if (response.success && response.data) {
+			return {
+				success: response.success,
+				status: response.status,
+				message: response.message,
+				data: response.data.content,
+			};
+		}
+
+		// 실패 시 빈 배열 반환
+		return {
+			success: false,
+			status: response.status,
+			message: response.message,
+			error: response.error,
+			data: [],
+		};
 	},
 
 	/**

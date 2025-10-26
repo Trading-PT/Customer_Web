@@ -24,9 +24,8 @@ export default function LeveltestPage() {
 			try {
 				const response = await leveltestAPI.getQuestions(currentPage, 100);
 				if (response.success && response.data) {
-					// 데이터가 배열인지 확인
-					const questionData = Array.isArray(response.data) ? response.data : [];
-					setQuestions(questionData);
+					setQuestions(response.data);
+					console.log("✅ 레벨테스트 문제 로드 완료:", response.data.length, "개");
 				} else {
 					console.error("문제 조회 실패:", response.message);
 					setQuestions([]);

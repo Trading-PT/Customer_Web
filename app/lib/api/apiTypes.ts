@@ -565,6 +565,22 @@ export interface LevelTestQuestionUserResponse {
 	multipleChoice?: MultipleChoicePayload;
 }
 
+/** Slice 응답 (무한스크롤용) */
+export interface SliceResponse<T> {
+	content: T[];
+	pageable: {
+		pageNumber: number;
+		pageSize: number;
+		offset: number;
+	};
+	numberOfElements: number;
+	size: number;
+	number: number;
+	first: boolean;
+	last: boolean;
+	empty: boolean;
+}
+
 /** 문제별 응답 정보 */
 export interface QuestionAnswer {
 	questionId: number;
