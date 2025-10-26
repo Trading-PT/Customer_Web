@@ -15,7 +15,7 @@ import { useAuth } from "../hooks/useAuth";
 // "TRAINER_ASSIGNED"
 
 // mockData
-const state: UserStatus = "UID_APPROVED"; // 바꿔가면서 테스트
+const state: UserStatus = "PAID_BEFORE_TEST"; // 바꿔가면서 테스트
 // 로그인한 계정의 status에 따라 바뀌도록 수정할 것 
 
 // mockData
